@@ -1,3 +1,4 @@
+--This watermark is used to delete the file if its cached, remove it to make the file persist after vape updates.
 local run = function(func)
 	func()
 end
@@ -2075,10 +2076,18 @@ run(function()
 	local Particles, Boxes = {}, {}
 	local anims, AnimDelay, AnimTween, armC0 = vape.Libraries.auraanims, tick()
 	local AttackRemote = {FireServer = function() end}
+	
+	-- NEW: Range Visualizer variables
+	local RangeVisualizer
+	local AimVisualizer
+	local RangeCirclePart
+	local AimCirclePart
+	local VisualizerColor = {Hue = 0.44, Sat = 1, Value = 1}
+	
 	task.spawn(function()
 		AttackRemote = bedwars.Client:Get(remotes.AttackEntity).instance
 	end)
-
+	
 	local function getAttackData()
 		if Mouse.Enabled then
 			if not inputService:IsMouseButtonPressed(0) then return false end
@@ -2101,6 +2110,47 @@ run(function()
 		end
 
 		return sword, meta
+	end
+	
+	-- NEW: Function to update range visualizer
+	local function updateRangeVisualizer()
+		if RangeCirclePart and entitylib.isAlive then
+			local root = entitylib.character.RootPart
+			if root then
+				RangeCirclePart.Position = root.Position - Vector3.new(0, entitylib.character.Humanoid.HipHeight, 0)
+				RangeCirclePart.Size = Vector3.new(SwingRange.Value * 0.7, 0.01, SwingRange.Value * 0.7)
+			end
+		end
+		
+		if AimCirclePart and entitylib.isAlive then
+			local root = entitylib.character.RootPart
+			if root then
+				local targetedEntity = store.KillauraTarget
+				if targetedEntity and targetedEntity.RootPart then
+					local function closestpos(block, pos)
+						local blockpos = block:GetRenderCFrame()
+						local startpos = (blockpos * CFrame.new(-(block.Size / 2))).Position
+						local endpos = (blockpos * CFrame.new((block.Size / 2))).Position
+						local newpos = block.Position + (pos - block.Position)
+						local x = startpos.X > endpos.X and endpos.X or startpos.X
+						local y = startpos.Y > endpos.Y and endpos.Y or startpos.Y
+						local z = startpos.Z > endpos.Z and endpos.Z or startpos.Z
+						local x2 = startpos.X < endpos.X and endpos.X or startpos.X
+						local y2 = startpos.Y < endpos.Y and endpos.Y or startpos.Y
+						local z2 = startpos.Z < endpos.Z and endpos.Z or startpos.Z
+						return Vector3.new(
+							math.clamp(newpos.X, x, x2),
+							math.clamp(newpos.Y, y, y2),
+							math.clamp(newpos.Z, z, z2)
+						)
+					end
+					
+					AimCirclePart.Position = closestpos(targetedEntity.RootPart, root.Position)
+				else
+					AimCirclePart.Position = Vector3.new(0, -1000, 0) -- Hide when no target
+				end
+			end
+		end
 	end
 
 	Killaura = vape.Categories.Blatant:CreateModule({
@@ -2146,7 +2196,7 @@ run(function()
 								end
 
 								for _, v in anims[AnimationMode.Value] do
-									AnimTween = tweenService:Create(gameCamera.Viewmodel.RightHand.RightWrist, TweenInfo.new(first and (AnimationTween.Enabled and 0.001 or 0.1) or v.Time / AnimationSpeed.Value, Enum.EasingStyle.Linear), {
+									AnimTween = tweenService:Create(gameCamera.Viewmodel.RightHand.RightWrist, TweenInfo.new(first and (AnimationTween.Enabled and 0.08 or 0.3) or v.Time / AnimationSpeed.Value, Enum.EasingStyle.Linear), {
 										C0 = armC0 * v.CFrame
 									})
 									AnimTween:Play()
@@ -2156,7 +2206,7 @@ run(function()
 								end
 							elseif started then
 								started = false
-								AnimTween = tweenService:Create(gameCamera.Viewmodel.RightHand.RightWrist, TweenInfo.new(AnimationTween.Enabled and 0.001 or 0.3, Enum.EasingStyle.Exponential), {
+								AnimTween = tweenService:Create(gameCamera.Viewmodel.RightHand.RightWrist, TweenInfo.new(AnimationTween.Enabled and 0.5 or 0.7, Enum.EasingStyle.Exponential), {
 									C0 = armC0
 								})
 								AnimTween:Play()
@@ -2168,6 +2218,22 @@ run(function()
 						until (not Killaura.Enabled) or (not Animation.Enabled)
 					end)
 				end
+				
+				-- NEW: Set up range visualizer
+				if RangeVisualizer.Enabled then
+					RangeCirclePart.Parent = gameCamera
+					bedwars.QueryUtil:setQueryIgnored(RangeCirclePart, true)
+				end
+				
+				if AimVisualizer.Enabled then
+					AimCirclePart.Parent = gameCamera
+				end
+				
+				-- NEW: Add heartbeat connection for visualizers
+				local visualizerConnection
+				visualizerConnection = runService.Heartbeat:Connect(updateRangeVisualizer)
+				
+				Killaura:Clean(visualizerConnection)
 
 				local swingCooldown = 0
 				repeat
@@ -2236,13 +2302,9 @@ run(function()
 									AttackRemote:FireServer({
 										weapon = sword.tool,
 										chargedAttack = {chargeRatio = 0},
-										lastSwingServerTimeDelta = 0.5,
 										entityInstance = v.Character,
 										validate = {
-											raycast = {
-												cameraPosition = {value = pos},
-												cursorDirection = {value = dir}
-											},
+											raycast = {},
 											targetPosition = {value = actualRoot.Position},
 											selfPosition = {value = pos}
 										}
@@ -2270,7 +2332,6 @@ run(function()
 						entitylib.character.RootPart.CFrame = CFrame.lookAt(entitylib.character.RootPart.Position, Vector3.new(vec.X, entitylib.character.RootPart.Position.Y + 0.001, vec.Z))
 					end
 
-					--#attacked > 0 and #attacked * 0.02 or
 					task.wait(1 / UpdateRate.Value)
 				until not Killaura.Enabled
 			else
@@ -2281,6 +2342,15 @@ run(function()
 				for _, v in Particles do
 					v.Parent = nil
 				end
+				
+				-- NEW: Clean up visualizers
+				if RangeCirclePart then
+					RangeCirclePart.Parent = nil
+				end
+				if AimCirclePart then
+					AimCirclePart.Parent = nil
+				end
+				
 				if inputService.TouchEnabled then
 					pcall(function()
 						lplr.PlayerGui.MobileUI['2'].Visible = true
@@ -2290,7 +2360,7 @@ run(function()
 				debug.setupvalue(bedwars.ScytheController.playLocalAnimation, 3, bedwars.Knit)
 				Attacking = false
 				if armC0 then
-					AnimTween = tweenService:Create(gameCamera.Viewmodel.RightHand.RightWrist, TweenInfo.new(AnimationTween.Enabled and 0.001 or 0.3, Enum.EasingStyle.Exponential), {
+					AnimTween = tweenService:Create(gameCamera.Viewmodel.RightHand.RightWrist, TweenInfo.new(AnimationTween.Enabled and 0.1 or 0.2, Enum.EasingStyle.Exponential), {
 						C0 = armC0
 					})
 					AnimTween:Play()
@@ -2299,39 +2369,54 @@ run(function()
 		end,
 		Tooltip = 'Attack players around you\nwithout aiming at them.'
 	})
+	
 	Targets = Killaura:CreateTargets({
 		Players = true,
 		NPCs = true
 	})
+	
 	local methods = {'Damage', 'Distance'}
 	for i in sortmethods do
 		if not table.find(methods, i) then
 			table.insert(methods, i)
 		end
 	end
+	
+	Sort = Killaura:CreateDropdown({
+		Name = 'Target Mode',
+		List = methods
+	})
+	
 	SwingRange = Killaura:CreateSlider({
 		Name = 'Swing range',
-		Min = 1,
-		Max = 18,
+		Min = 16,
+		Max = 20,
 		Default = 18,
 		Suffix = function(val)
 			return val == 1 and 'stud' or 'studs'
+		end,
+		Function = function(val)
+			if RangeCirclePart then
+				RangeCirclePart.Size = Vector3.new(val * 0.7, 0.01, val * 0.7)
+			end
 		end
 	})
+	
 	AttackRange = Killaura:CreateSlider({
 		Name = 'Attack range',
-		Min = 1,
-		Max = 18,
+		Min = 15,
+		Max = 20,
 		Default = 18,
 		Suffix = function(val)
 			return val == 1 and 'stud' or 'studs'
 		end
 	})
+	
 	ChargeTime = Killaura:CreateSlider({
 		Name = 'Swing time',
 		Min = 0,
-		Max = 0.5,
-		Default = 0.42,
+		Max = 0.3,
+		Default = 0,
 		Decimal = 100
 	})
 	AngleSlider = Killaura:CreateSlider({
@@ -2342,24 +2427,22 @@ run(function()
 	})
 	UpdateRate = Killaura:CreateSlider({
 		Name = 'Update rate',
-		Min = 1,
-		Max = 120,
-		Default = 60,
+		Min = 60,
+		Max = 144,
+		Default = 120,
 		Suffix = 'hz'
 	})
 	MaxTargets = Killaura:CreateSlider({
 		Name = 'Max targets',
 		Min = 1,
-		Max = 5,
-		Default = 5
+		Max = 4,
+		Default = 2
 	})
-	Sort = Killaura:CreateDropdown({
-		Name = 'Target Mode',
-		List = methods
-	})
+	
 	Mouse = Killaura:CreateToggle({Name = 'Require mouse down'})
 	Swing = Killaura:CreateToggle({Name = 'No Swing'})
 	GUI = Killaura:CreateToggle({Name = 'GUI check'})
+	
 	Killaura:CreateToggle({
 		Name = 'Show target',
 		Function = function(callback)
@@ -2389,7 +2472,18 @@ run(function()
 		Darker = true,
 		DefaultHue = 0.6,
 		DefaultOpacity = 0.5,
-		Visible = false
+		Visible = false,
+		Function = function(h, s, v, o)
+			VisualizerColor.Hue = h
+			VisualizerColor.Sat = s
+			VisualizerColor.Value = v
+			if RangeCirclePart then
+				RangeCirclePart.Color = Color3.fromHSV(h, s, v)
+			end
+			if AimCirclePart then
+				AimCirclePart.Color = Color3.fromHSV(h, s, v)
+			end
+		end
 	})
 	BoxAttackColor = Killaura:CreateColorSlider({
 		Name = 'Attack Color',
@@ -2397,6 +2491,51 @@ run(function()
 		DefaultOpacity = 0.5,
 		Visible = false
 	})
+	RangeVisualizer = Killaura:CreateToggle({
+		Name = 'Range Visualizer',
+		Function = function(callback)
+			if callback then
+				RangeCirclePart = Instance.new("MeshPart")
+				RangeCirclePart.MeshId = "rbxassetid://3726303797"
+				RangeCirclePart.Color = Color3.fromHSV(VisualizerColor.Hue, VisualizerColor.Sat, VisualizerColor.Value)
+				RangeCirclePart.CanCollide = false
+				RangeCirclePart.Anchored = true
+				RangeCirclePart.Material = Enum.Material.Neon
+				RangeCirclePart.Size = Vector3.new(SwingRange.Value * 0.7, 0.01, SwingRange.Value * 0.7)
+				RangeCirclePart.Transparency = 0.5
+				RangeCirclePart.Parent = Killaura.Enabled and gameCamera or nil
+			else
+				if RangeCirclePart then
+					RangeCirclePart:Destroy()
+					RangeCirclePart = nil
+				end
+			end
+		end
+	})
+	
+	-- NEW: Aim Visualizer toggle
+	AimVisualizer = Killaura:CreateToggle({
+		Name = 'Aim Visualizer',
+		Function = function(callback)
+			if callback then
+				AimCirclePart = Instance.new("Part")
+				AimCirclePart.Shape = Enum.PartType.Ball
+				AimCirclePart.Color = Color3.fromHSV(VisualizerColor.Hue, VisualizerColor.Sat, VisualizerColor.Value)
+				AimCirclePart.CanCollide = false
+				AimCirclePart.Anchored = true
+				AimCirclePart.Material = Enum.Material.Neon
+				AimCirclePart.Size = Vector3.new(0.5, 0.5, 0.5)
+				AimCirclePart.Transparency = 0.5
+				AimCirclePart.Parent = Killaura.Enabled and gameCamera or nil
+			else
+				if AimCirclePart then
+					AimCirclePart:Destroy()
+					AimCirclePart = nil
+				end
+			end
+		end
+	})
+	
 	Killaura:CreateToggle({
 		Name = 'Target particles',
 		Function = function(callback)
@@ -2439,6 +2578,7 @@ run(function()
 			end
 		end
 	})
+	
 	ParticleTexture = Killaura:CreateTextBox({
 		Name = 'Texture',
 		Default = 'rbxassetid://14736249347',
@@ -2450,6 +2590,7 @@ run(function()
 		Darker = true,
 		Visible = false
 	})
+	
 	ParticleColor1 = Killaura:CreateColorSlider({
 		Name = 'Color Begin',
 		Function = function(hue, sat, val)
@@ -2463,6 +2604,7 @@ run(function()
 		Darker = true,
 		Visible = false
 	})
+	
 	ParticleColor2 = Killaura:CreateColorSlider({
 		Name = 'Color End',
 		Function = function(hue, sat, val)
@@ -2476,6 +2618,7 @@ run(function()
 		Darker = true,
 		Visible = false
 	})
+	
 	ParticleSize = Killaura:CreateSlider({
 		Name = 'Size',
 		Min = 0,
@@ -2490,7 +2633,9 @@ run(function()
 		Darker = true,
 		Visible = false
 	})
+	
 	Face = Killaura:CreateToggle({Name = 'Face target'})
+	
 	Animation = Killaura:CreateToggle({
 		Name = 'Custom Animation',
 		Function = function(callback)
@@ -2503,30 +2648,35 @@ run(function()
 			end
 		end
 	})
+	
 	local animnames = {}
 	for i in anims do
 		table.insert(animnames, i)
 	end
+	
 	AnimationMode = Killaura:CreateDropdown({
 		Name = 'Animation Mode',
 		List = animnames,
 		Darker = true,
 		Visible = false
 	})
+	
 	AnimationSpeed = Killaura:CreateSlider({
 		Name = 'Animation Speed',
-		Min = 0,
-		Max = 2,
+		Min = 0.5,
+		Max = 2.5,
 		Default = 1,
 		Decimal = 10,
 		Darker = true,
 		Visible = false
 	})
+	
 	AnimationTween = Killaura:CreateToggle({
 		Name = 'No Tween',
 		Darker = true,
 		Visible = false
 	})
+	
 	Limit = Killaura:CreateToggle({
 		Name = 'Limit to items',
 		Function = function(callback)
@@ -2538,10 +2688,11 @@ run(function()
 		end,
 		Tooltip = 'Only attacks when the sword is held'
 	})
-	--[[LegitAura = Killaura:CreateToggle({
+	
+	LegitAura = Killaura:CreateToggle({
 		Name = 'Swing only',
 		Tooltip = 'Only attacks while swinging manually'
-	})]]
+	})
 end)
 	
 run(function()
