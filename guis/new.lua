@@ -59,69 +59,69 @@ local uipallet = {
 }
 
 local getcustomassets = {
-	['newvape/assets/new/add.png'] = 'rbxassetid://14368300605',
-	['newvape/assets/new/alert.png'] = 'rbxassetid://14368301329',
-	['newvape/assets/new/allowedicon.png'] = 'rbxassetid://14368302000',
-	['newvape/assets/new/allowedtab.png'] = 'rbxassetid://14368302875',
-	['newvape/assets/new/arrowmodule.png'] = 'rbxassetid://14473354880',
-	['newvape/assets/new/back.png'] = 'rbxassetid://14368303894',
-	['newvape/assets/new/bind.png'] = 'rbxassetid://14368304734',
-	['newvape/assets/new/bindbkg.png'] = 'rbxassetid://14368305655',
-	['newvape/assets/new/blatanticon.png'] = 'rbxassetid://14368306745',
-	['newvape/assets/new/blockedicon.png'] = 'rbxassetid://14385669108',
-	['newvape/assets/new/blockedtab.png'] = 'rbxassetid://14385672881',
-	['newvape/assets/new/blur.png'] = 'rbxassetid://14898786664',
-	['newvape/assets/new/blurnotif.png'] = 'rbxassetid://16738720137',
-	['newvape/assets/new/close.png'] = 'rbxassetid://14368309446',
-	['newvape/assets/new/closemini.png'] = 'rbxassetid://14368310467',
-	['newvape/assets/new/colorpreview.png'] = 'rbxassetid://14368311578',
-	['newvape/assets/new/combaticon.png'] = 'rbxassetid://14368312652',
-	['newvape/assets/new/customsettings.png'] = 'rbxassetid://14403726449',
-	['newvape/assets/new/discord.png'] = '',
-	['newvape/assets/new/dots.png'] = 'rbxassetid://14368314459',
-	['newvape/assets/new/edit.png'] = 'rbxassetid://14368315443',
-	['newvape/assets/new/expandicon.png'] = 'rbxassetid://14368353032',
-	['newvape/assets/new/expandright.png'] = 'rbxassetid://14368316544',
-	['newvape/assets/new/expandup.png'] = 'rbxassetid://14368317595',
-	['newvape/assets/new/friendstab.png'] = 'rbxassetid://14397462778',
-	['newvape/assets/new/guisettings.png'] = 'rbxassetid://14368318994',
-	['newvape/assets/new/guislider.png'] = 'rbxassetid://14368320020',
-	['newvape/assets/new/guisliderrain.png'] = 'rbxassetid://14368321228',
-	['newvape/assets/new/guiv4.png'] = 'rbxassetid://14368322199',
-	['newvape/assets/new/guivape.png'] = 'rbxassetid://14657521312',
-	['newvape/assets/new/info.png'] = 'rbxassetid://14368324807',
-	['newvape/assets/new/inventoryicon.png'] = 'rbxassetid://14928011633',
-	['newvape/assets/new/legit.png'] = 'rbxassetid://14425650534',
-	['newvape/assets/new/legittab.png'] = 'rbxassetid://14426740825',
-	['newvape/assets/new/miniicon.png'] = 'rbxassetid://14368326029',
-	['newvape/assets/new/notification.png'] = 'rbxassetid://16738721069',
-	['newvape/assets/new/overlaysicon.png'] = 'rbxassetid://14368339581',
-	['newvape/assets/new/overlaystab.png'] = 'rbxassetid://14397380433',
-	['newvape/assets/new/pin.png'] = 'rbxassetid://14368342301',
-	['newvape/assets/new/profilesicon.png'] = 'rbxassetid://14397465323',
-	['newvape/assets/new/radaricon.png'] = 'rbxassetid://14368343291',
-	['newvape/assets/new/rainbow_1.png'] = 'rbxassetid://14368344374',
-	['newvape/assets/new/rainbow_2.png'] = 'rbxassetid://14368345149',
-	['newvape/assets/new/rainbow_3.png'] = 'rbxassetid://14368345840',
-	['newvape/assets/new/rainbow_4.png'] = 'rbxassetid://14368346696',
-	['newvape/assets/new/range.png'] = 'rbxassetid://14368347435',
-	['newvape/assets/new/rangearrow.png'] = 'rbxassetid://14368348640',
-	['newvape/assets/new/rendericon.png'] = 'rbxassetid://14368350193',
-	['newvape/assets/new/rendertab.png'] = 'rbxassetid://14397373458',
-	['newvape/assets/new/search.png'] = 'rbxassetid://14425646684',
-	['newvape/assets/new/targetinfoicon.png'] = 'rbxassetid://14368354234',
-	['newvape/assets/new/targetnpc1.png'] = 'rbxassetid://14497400332',
-	['newvape/assets/new/targetnpc2.png'] = 'rbxassetid://14497402744',
-	['newvape/assets/new/targetplayers1.png'] = 'rbxassetid://14497396015',
-	['newvape/assets/new/targetplayers2.png'] = 'rbxassetid://14497397862',
-	['newvape/assets/new/targetstab.png'] = 'rbxassetid://14497393895',
-	['newvape/assets/new/textguiicon.png'] = 'rbxassetid://14368355456',
-	['newvape/assets/new/textv4.png'] = 'rbxassetid://14368357095',
-	['newvape/assets/new/textvape.png'] = 'rbxassetid://14368358200',
-	['newvape/assets/new/utilityicon.png'] = 'rbxassetid://14368359107',
-	['newvape/assets/new/vape.png'] = 'rbxassetid://14373395239',
-	['newvape/assets/new/warning.png'] = 'rbxassetid://14368361552',
-	['newvape/assets/new/worldicon.png'] = 'rbxassetid://14368362492'
+	['noboline/assets/new/add.png'] = 'rbxassetid://14368300605',
+	['noboline/assets/new/alert.png'] = 'rbxassetid://14368301329',
+	['noboline/assets/new/allowedicon.png'] = 'rbxassetid://14368302000',
+	['noboline/assets/new/allowedtab.png'] = 'rbxassetid://14368302875',
+	['noboline/assets/new/arrowmodule.png'] = 'rbxassetid://14473354880',
+	['noboline/assets/new/back.png'] = 'rbxassetid://14368303894',
+	['noboline/assets/new/bind.png'] = 'rbxassetid://14368304734',
+	['noboline/assets/new/bindbkg.png'] = 'rbxassetid://14368305655',
+	['noboline/assets/new/blatanticon.png'] = 'rbxassetid://14368306745',
+	['noboline/assets/new/blockedicon.png'] = 'rbxassetid://14385669108',
+	['noboline/assets/new/blockedtab.png'] = 'rbxassetid://14385672881',
+	['noboline/assets/new/blur.png'] = 'rbxassetid://14898786664',
+	['noboline/assets/new/blurnotif.png'] = 'rbxassetid://16738720137',
+	['noboline/assets/new/close.png'] = 'rbxassetid://14368309446',
+	['noboline/assets/new/closemini.png'] = 'rbxassetid://14368310467',
+	['noboline/assets/new/colorpreview.png'] = 'rbxassetid://14368311578',
+	['noboline/assets/new/combaticon.png'] = 'rbxassetid://14368312652',
+	['noboline/assets/new/customsettings.png'] = 'rbxassetid://14403726449',
+	['noboline/assets/new/discord.png'] = '',
+	['noboline/assets/new/dots.png'] = 'rbxassetid://14368314459',
+	['noboline/assets/new/edit.png'] = 'rbxassetid://14368315443',
+	['noboline/assets/new/expandicon.png'] = 'rbxassetid://14368353032',
+	['noboline/assets/new/expandright.png'] = 'rbxassetid://14368316544',
+	['noboline/assets/new/expandup.png'] = 'rbxassetid://14368317595',
+	['noboline/assets/new/friendstab.png'] = 'rbxassetid://14397462778',
+	['noboline/assets/new/guisettings.png'] = 'rbxassetid://14368318994',
+	['noboline/assets/new/guislider.png'] = 'rbxassetid://14368320020',
+	['noboline/assets/new/guisliderrain.png'] = 'rbxassetid://14368321228',
+	['noboline/assets/new/guiv4.png'] = 'rbxassetid://14368322199',
+	['noboline/assets/new/guivape.png'] = 'rbxassetid://14657521312',
+	['noboline/assets/new/info.png'] = 'rbxassetid://14368324807',
+	['noboline/assets/new/inventoryicon.png'] = 'rbxassetid://14928011633',
+	['noboline/assets/new/legit.png'] = 'rbxassetid://14425650534',
+	['noboline/assets/new/legittab.png'] = 'rbxassetid://14426740825',
+	['noboline/assets/new/miniicon.png'] = 'rbxassetid://14368326029',
+	['noboline/assets/new/notification.png'] = 'rbxassetid://16738721069',
+	['noboline/assets/new/overlaysicon.png'] = 'rbxassetid://14368339581',
+	['noboline/assets/new/overlaystab.png'] = 'rbxassetid://14397380433',
+	['noboline/assets/new/pin.png'] = 'rbxassetid://14368342301',
+	['noboline/assets/new/profilesicon.png'] = 'rbxassetid://14397465323',
+	['noboline/assets/new/radaricon.png'] = 'rbxassetid://14368343291',
+	['noboline/assets/new/rainbow_1.png'] = 'rbxassetid://14368344374',
+	['noboline/assets/new/rainbow_2.png'] = 'rbxassetid://14368345149',
+	['noboline/assets/new/rainbow_3.png'] = 'rbxassetid://14368345840',
+	['noboline/assets/new/rainbow_4.png'] = 'rbxassetid://14368346696',
+	['noboline/assets/new/range.png'] = 'rbxassetid://14368347435',
+	['noboline/assets/new/rangearrow.png'] = 'rbxassetid://14368348640',
+	['noboline/assets/new/rendericon.png'] = 'rbxassetid://14368350193',
+	['noboline/assets/new/rendertab.png'] = 'rbxassetid://14397373458',
+	['noboline/assets/new/search.png'] = 'rbxassetid://14425646684',
+	['noboline/assets/new/targetinfoicon.png'] = 'rbxassetid://14368354234',
+	['noboline/assets/new/targetnpc1.png'] = 'rbxassetid://14497400332',
+	['noboline/assets/new/targetnpc2.png'] = 'rbxassetid://14497402744',
+	['noboline/assets/new/targetplayers1.png'] = 'rbxassetid://14497396015',
+	['noboline/assets/new/targetplayers2.png'] = 'rbxassetid://14497397862',
+	['noboline/assets/new/targetstab.png'] = 'rbxassetid://14497393895',
+	['noboline/assets/new/textguiicon.png'] = 'rbxassetid://14368355456',
+	['noboline/assets/new/textv4.png'] = 'rbxassetid://14368357095',
+	['noboline/assets/new/textvape.png'] = 'rbxassetid://14368358200',
+	['noboline/assets/new/utilityicon.png'] = 'rbxassetid://14368359107',
+	['noboline/assets/new/vape.png'] = 'rbxassetid://14373395239',
+	['noboline/assets/new/warning.png'] = 'rbxassetid://14368361552',
+	['noboline/assets/new/worldicon.png'] = 'rbxassetid://14368362492'
 }
 
 local isfile = isfile or function(file)
@@ -146,7 +146,7 @@ local function addBlur(parent, notif)
 	blur.Size = UDim2.new(1, 89, 1, 52)
 	blur.Position = UDim2.fromOffset(-48, -31)
 	blur.BackgroundTransparency = 1
-	blur.Image = getcustomasset('newvape/assets/new/'..(notif and 'blurnotif' or 'blur')..'.png')
+	blur.Image = getcustomasset('noboline/assets/new/'..(notif and 'blurnotif' or 'blur')..'.png')
 	blur.ScaleType = Enum.ScaleType.Slice
 	blur.SliceCenter = Rect.new(52, 31, 261, 502)
 	blur.Parent = parent
@@ -170,7 +170,7 @@ local function addCloseButton(parent, offset)
 	close.BackgroundColor3 = Color3.new(1, 1, 1)
 	close.BackgroundTransparency = 1
 	close.AutoButtonColor = false
-	close.Image = getcustomasset('newvape/assets/new/close.png')
+	close.Image = getcustomasset('noboline/assets/new/close.png')
 	close.ImageColor3 = color.Light(uipallet.Text, 0.2)
 	close.ImageTransparency = 0.5
 	close.Parent = parent
@@ -314,7 +314,7 @@ local function downloadFile(path, func)
 	if not isfile(path) then
 		createDownloader(path)
 		local suc, res = pcall(function()
-			return game:HttpGet('https://raw.githubusercontent.com/7GrandDadPGN/VapeV4ForRoblox/'..readfile('newvape/profiles/commit.txt')..'/'..select(1, path:gsub('newvape/', '')), true)
+			return game:HttpGet('https://raw.githubusercontent.com/nobalone/noboline/'..readfile('noboline/profiles/commit.txt')..'/'..select(1, path:gsub('noboline/', '')), true)
 		end)
 		if not suc or res == '404: Not Found' then
 			error(res)
@@ -407,7 +407,7 @@ local function removeTags(str)
 end
 
 do
-	local res = isfile('newvape/profiles/color.txt') and loadJson('newvape/profiles/color.txt')
+	local res = isfile('noboline/profiles/color.txt') and loadJson('noboline/profiles/color.txt')
 	if res then
 		uipallet.Main = res.Main and Color3.fromRGB(unpack(res.Main)) or uipallet.Main
 		uipallet.Text = res.Text and Color3.fromRGB(unpack(res.Text)) or uipallet.Text
@@ -694,7 +694,7 @@ components = {
 		preview.Size = UDim2.fromOffset(12, 12)
 		preview.Position = UDim2.new(1, -22, 0, 10)
 		preview.BackgroundTransparency = 1
-		preview.Image = getcustomasset('newvape/assets/new/colorpreview.png')
+		preview.Image = getcustomasset('noboline/assets/new/colorpreview.png')
 		preview.ImageColor3 = Color3.fromHSV(optionapi.Hue, optionapi.Sat, optionapi.Value)
 		preview.ImageTransparency = 1 - optionapi.Opacity
 		preview.Parent = slider
@@ -710,7 +710,7 @@ components = {
 		expand.Size = UDim2.fromOffset(9, 5)
 		expand.Position = UDim2.fromOffset(4, 4)
 		expand.BackgroundTransparency = 1
-		expand.Image = getcustomasset('newvape/assets/new/expandicon.png')
+		expand.Image = getcustomasset('noboline/assets/new/expandicon.png')
 		expand.ImageColor3 = color.Dark(uipallet.Text, 0.43)
 		expand.Parent = expandbutton
 		local rainbow = Instance.new('TextButton')
@@ -723,17 +723,17 @@ components = {
 		local rainbow1 = Instance.new('ImageLabel')
 		rainbow1.Size = UDim2.fromOffset(12, 12)
 		rainbow1.BackgroundTransparency = 1
-		rainbow1.Image = getcustomasset('newvape/assets/new/rainbow_1.png')
+		rainbow1.Image = getcustomasset('noboline/assets/new/rainbow_1.png')
 		rainbow1.ImageColor3 = color.Light(uipallet.Main, 0.37)
 		rainbow1.Parent = rainbow
 		local rainbow2 = rainbow1:Clone()
-		rainbow2.Image = getcustomasset('newvape/assets/new/rainbow_2.png')
+		rainbow2.Image = getcustomasset('noboline/assets/new/rainbow_2.png')
 		rainbow2.Parent = rainbow
 		local rainbow3 = rainbow1:Clone()
-		rainbow3.Image = getcustomasset('newvape/assets/new/rainbow_3.png')
+		rainbow3.Image = getcustomasset('noboline/assets/new/rainbow_3.png')
 		rainbow3.Parent = rainbow
 		local rainbow4 = rainbow1:Clone()
-		rainbow4.Image = getcustomasset('newvape/assets/new/rainbow_4.png')
+		rainbow4.Image = getcustomasset('noboline/assets/new/rainbow_4.png')
 		rainbow4.Parent = rainbow
 		local knobholder = Instance.new('Frame')
 		knobholder.Name = 'Knob'
@@ -998,7 +998,7 @@ components = {
 		arrow.Size = UDim2.fromOffset(4, 8)
 		arrow.Position = UDim2.new(1, -17, 0, 11)
 		arrow.BackgroundTransparency = 1
-		arrow.Image = getcustomasset('newvape/assets/new/expandright.png')
+		arrow.Image = getcustomasset('noboline/assets/new/expandright.png')
 		arrow.ImageColor3 = Color3.fromRGB(140, 140, 140)
 		arrow.Rotation = 90
 		arrow.Parent = button
@@ -1409,7 +1409,7 @@ components = {
 		icon.Size = UDim2.fromOffset(18, 12)
 		icon.Position = UDim2.fromOffset(10, 15)
 		icon.BackgroundTransparency = 1
-		icon.Image = getcustomasset('newvape/assets/new/targetstab.png')
+		icon.Image = getcustomasset('noboline/assets/new/targetstab.png')
 		icon.Parent = window
 		local title = Instance.new('TextLabel')
 		title.Name = 'Title'
@@ -1471,20 +1471,20 @@ components = {
 		
 		optionapi.Players = components.TargetsButton({
 			Position = UDim2.fromOffset(11, 45),
-			Icon = getcustomasset('newvape/assets/new/targetplayers1.png'),
+			Icon = getcustomasset('noboline/assets/new/targetplayers1.png'),
 			IconSize = UDim2.fromOffset(15, 16),
 			IconParent = tool,
-			ToolIcon = getcustomasset('newvape/assets/new/targetplayers2.png'),
+			ToolIcon = getcustomasset('noboline/assets/new/targetplayers2.png'),
 			ToolSize = UDim2.fromOffset(11, 12),
 			Tooltip = 'Players',
 			Function = optionsettings.Function
 		}, window, tool)
 		optionapi.NPCs = components.TargetsButton({
 			Position = UDim2.fromOffset(112, 45),
-			Icon = getcustomasset('newvape/assets/new/targetnpc1.png'),
+			Icon = getcustomasset('noboline/assets/new/targetnpc1.png'),
 			IconSize = UDim2.fromOffset(12, 16),
 			IconParent = tool,
-			ToolIcon = getcustomasset('newvape/assets/new/targetnpc2.png'),
+			ToolIcon = getcustomasset('noboline/assets/new/targetnpc2.png'),
 			ToolSize = UDim2.fromOffset(9, 12),
 			Tooltip = 'NPCs',
 			Function = optionsettings.Function
@@ -1768,7 +1768,7 @@ components = {
 		buttonicon.Size = UDim2.fromOffset(14, 12)
 		buttonicon.Position = UDim2.fromOffset(10, 14)
 		buttonicon.BackgroundTransparency = 1
-		buttonicon.Image = optionsettings.Icon or getcustomasset('newvape/assets/new/allowedicon.png')
+		buttonicon.Image = optionsettings.Icon or getcustomasset('noboline/assets/new/allowedicon.png')
 		buttonicon.Parent = button
 		local buttontitle = Instance.new('TextLabel')
 		buttontitle.Name = 'Title'
@@ -1814,7 +1814,7 @@ components = {
 		icon.Size = optionsettings.TabSize or UDim2.fromOffset(19, 16)
 		icon.Position = UDim2.fromOffset(10, 13)
 		icon.BackgroundTransparency = 1
-		icon.Image = optionsettings.Tab or getcustomasset('newvape/assets/new/allowedtab.png')
+		icon.Image = optionsettings.Tab or getcustomasset('noboline/assets/new/allowedtab.png')
 		icon.Parent = window
 		local title = Instance.new('TextLabel')
 		title.Name = 'Title'
@@ -1857,7 +1857,7 @@ components = {
 		addbutton.Size = UDim2.fromOffset(16, 16)
 		addbutton.Position = UDim2.new(1, -26, 0, 8)
 		addbutton.BackgroundTransparency = 1
-		addbutton.Image = getcustomasset('newvape/assets/new/add.png')
+		addbutton.Image = getcustomasset('noboline/assets/new/add.png')
 		addbutton.ImageColor3 = optionsettings.Color
 		addbutton.ImageTransparency = 0.3
 		addbutton.Parent = addbkg
@@ -1961,7 +1961,7 @@ components = {
 				close.BackgroundColor3 = Color3.new(1, 1, 1)
 				close.BackgroundTransparency = 1
 				close.AutoButtonColor = false
-				close.Image = getcustomasset('newvape/assets/new/closemini.png')
+				close.Image = getcustomasset('noboline/assets/new/closemini.png')
 				close.ImageColor3 = color.Light(uipallet.Text, 0.2)
 				close.ImageTransparency = 0.5
 				close.Parent = object
@@ -2261,7 +2261,7 @@ components = {
 		knob.Position = UDim2.fromScale(0.5, 0.5)
 		knob.AnchorPoint = Vector2.new(0.5, 0.5)
 		knob.BackgroundTransparency = 1
-		knob.Image = getcustomasset('newvape/assets/new/range.png')
+		knob.Image = getcustomasset('noboline/assets/new/range.png')
 		knob.ImageColor3 = Color3.fromHSV(mainapi.GUIColor.Hue, mainapi.GUIColor.Sat, mainapi.GUIColor.Value)
 		knob.Parent = knobholder
 		local knobholdermax = knobholder:Clone()
@@ -2274,7 +2274,7 @@ components = {
 		arrow.Size = UDim2.fromOffset(12, 6)
 		arrow.Position = UDim2.new(1, -56, 0, 10)
 		arrow.BackgroundTransparency = 1
-		arrow.Image = getcustomasset('newvape/assets/new/rangearrow.png')
+		arrow.Image = getcustomasset('noboline/assets/new/rangearrow.png')
 		arrow.ImageColor3 = color.Light(uipallet.Main, 0.14)
 		arrow.Parent = slider
 		optionsettings.Function = optionsettings.Function or function() end
@@ -2486,7 +2486,7 @@ function mainapi:CreateGUI()
 	logo.Size = UDim2.fromOffset(62, 18)
 	logo.Position = UDim2.fromOffset(11, 10)
 	logo.BackgroundTransparency = 1
-	logo.Image = getcustomasset('newvape/assets/new/guivape.png')
+	logo.Image = getcustomasset('noboline/assets/new/guivape.png')
 	logo.ImageColor3 = select(3, uipallet.Main:ToHSV()) > 0.5 and uipallet.Text or Color3.new(1, 1, 1)
 	logo.Parent = window
 	local logov4 = Instance.new('ImageLabel')
@@ -2494,7 +2494,7 @@ function mainapi:CreateGUI()
 	logov4.Size = UDim2.fromOffset(28, 16)
 	logov4.Position = UDim2.new(1, 1, 0, 1)
 	logov4.BackgroundTransparency = 1
-	logov4.Image = getcustomasset('newvape/assets/new/guiv4.png')
+	logov4.Image = getcustomasset('noboline/assets/new/guiv4.png')
 	logov4.Parent = logo
 	local children = Instance.new('Frame')
 	children.Name = 'Children'
@@ -2518,14 +2518,14 @@ function mainapi:CreateGUI()
 	settingsicon.Size = UDim2.fromOffset(14, 14)
 	settingsicon.Position = UDim2.fromOffset(15, 12)
 	settingsicon.BackgroundTransparency = 1
-	settingsicon.Image = getcustomasset('newvape/assets/new/guisettings.png')
+	settingsicon.Image = getcustomasset('noboline/assets/new/guisettings.png')
 	settingsicon.ImageColor3 = color.Light(uipallet.Main, 0.37)
 	settingsicon.Parent = settingsbutton
 	local discordbutton = Instance.new('ImageButton')
 	discordbutton.Size = UDim2.fromOffset(16, 16)
 	discordbutton.Position = UDim2.new(1, -56, 0, 11)
 	discordbutton.BackgroundTransparency = 1
-	discordbutton.Image = getcustomasset('newvape/assets/new/discord.png')
+	discordbutton.Image = getcustomasset('noboline/assets/new/discord.png')
 	discordbutton.Parent = window
 	addTooltip(discordbutton, 'Join discord')
 	local settingspane = Instance.new('TextButton')
@@ -2552,7 +2552,7 @@ function mainapi:CreateGUI()
 	back.Size = UDim2.fromOffset(16, 16)
 	back.Position = UDim2.fromOffset(11, 13)
 	back.BackgroundTransparency = 1
-	back.Image = getcustomasset('newvape/assets/new/back.png')
+	back.Image = getcustomasset('noboline/assets/new/back.png')
 	back.ImageColor3 = color.Light(uipallet.Main, 0.37)
 	back.Parent = settingspane
 	local settingsversion = Instance.new('TextLabel')
@@ -2561,7 +2561,7 @@ function mainapi:CreateGUI()
 	settingsversion.Position = UDim2.new(0, 0, 1, -16)
 	settingsversion.BackgroundTransparency = 1
 	settingsversion.Text = 'Vape '..mainapi.Version..' '..(
-		isfile('newvape/profiles/commit.txt') and readfile('newvape/profiles/commit.txt'):sub(1, 6) or ''
+		isfile('noboline/profiles/commit.txt') and readfile('noboline/profiles/commit.txt'):sub(1, 6) or ''
 	)..' '
 	settingsversion.TextColor3 = color.Dark(uipallet.Text, 0.43)
 	settingsversion.TextXAlignment = Enum.TextXAlignment.Right
@@ -2615,7 +2615,7 @@ function mainapi:CreateGUI()
 		icon.Size = UDim2.fromOffset(12, 12)
 		icon.Position = UDim2.new(0.5, -6, 0, 5)
 		icon.BackgroundTransparency = 1
-		icon.Image = getcustomasset('newvape/assets/new/bind.png')
+		icon.Image = getcustomasset('noboline/assets/new/bind.png')
 		icon.ImageColor3 = color.Dark(uipallet.Text, 0.43)
 		icon.Parent = bind
 		local label = Instance.new('TextLabel')
@@ -2648,13 +2648,13 @@ function mainapi:CreateGUI()
 		bind.MouseEnter:Connect(function()
 			label.Visible = false
 			icon.Visible = not label.Visible
-			icon.Image = getcustomasset('newvape/assets/new/edit.png')
+			icon.Image = getcustomasset('noboline/assets/new/edit.png')
 			icon.ImageColor3 = color.Dark(uipallet.Text, 0.16)
 		end)
 		bind.MouseLeave:Connect(function()
 			label.Visible = true
 			icon.Visible = not label.Visible
-			icon.Image = getcustomasset('newvape/assets/new/bind.png')
+			icon.Image = getcustomasset('noboline/assets/new/bind.png')
 			icon.ImageColor3 = color.Dark(uipallet.Text, 0.43)
 		end)
 		bind.MouseButton1Click:Connect(function()
@@ -2715,7 +2715,7 @@ function mainapi:CreateGUI()
 		arrow.Size = UDim2.fromOffset(4, 8)
 		arrow.Position = UDim2.new(1, -20, 0, 16)
 		arrow.BackgroundTransparency = 1
-		arrow.Image = getcustomasset('newvape/assets/new/expandright.png')
+		arrow.Image = getcustomasset('noboline/assets/new/expandright.png')
 		arrow.ImageColor3 = color.Light(uipallet.Main, 0.37)
 		arrow.Parent = button
 		optionapi.Name = categorysettings.Name
@@ -2777,7 +2777,7 @@ function mainapi:CreateGUI()
 		button.Position = UDim2.new(1, -29, 0, 7)
 		button.BackgroundTransparency = 1
 		button.AutoButtonColor = false
-		button.Image = getcustomasset('newvape/assets/new/overlaysicon.png')
+		button.Image = getcustomasset('noboline/assets/new/overlaysicon.png')
 		button.ImageColor3 = color.Light(uipallet.Main, 0.37)
 		button.Parent = bar
 		addCorner(button, UDim.new(1, 0))
@@ -2804,7 +2804,7 @@ function mainapi:CreateGUI()
 		icon.Size = UDim2.fromOffset(14, 12)
 		icon.Position = UDim2.fromOffset(10, 13)
 		icon.BackgroundTransparency = 1
-		icon.Image = getcustomasset('newvape/assets/new/overlaystab.png')
+		icon.Image = getcustomasset('noboline/assets/new/overlaystab.png')
 		icon.ImageColor3 = uipallet.Text
 		icon.Parent = window
 		local title = Instance.new('TextLabel')
@@ -2996,7 +2996,7 @@ function mainapi:CreateGUI()
 		arrow.Size = UDim2.fromOffset(4, 8)
 		arrow.Position = UDim2.new(1, -20, 0, 16)
 		arrow.BackgroundTransparency = 1
-		arrow.Image = getcustomasset('newvape/assets/new/expandright.png')
+		arrow.Image = getcustomasset('noboline/assets/new/expandright.png')
 		arrow.ImageColor3 = color.Light(uipallet.Main, 0.37)
 		arrow.Parent = button
 		local settingspane = Instance.new('TextButton')
@@ -3023,7 +3023,7 @@ function mainapi:CreateGUI()
 		back.Size = UDim2.fromOffset(16, 16)
 		back.Position = UDim2.fromOffset(11, 13)
 		back.BackgroundTransparency = 1
-		back.Image = getcustomasset('newvape/assets/new/back.png')
+		back.Image = getcustomasset('noboline/assets/new/back.png')
 		back.ImageColor3 = color.Light(uipallet.Main, 0.37)
 		back.Parent = settingspane
 		addCorner(settingspane)
@@ -3271,7 +3271,7 @@ function mainapi:CreateGUI()
 		preview.Size = UDim2.fromOffset(12, 12)
 		preview.Position = UDim2.new(1, -22, 0, 10)
 		preview.BackgroundTransparency = 1
-		preview.Image = getcustomasset('newvape/assets/new/colorpreview.png')
+		preview.Image = getcustomasset('noboline/assets/new/colorpreview.png')
 		preview.ImageColor3 = Color3.fromHSV(optionapi.Hue, 1, 1)
 		preview.Parent = slider
 		local valuebox = Instance.new('TextBox')
@@ -3299,7 +3299,7 @@ function mainapi:CreateGUI()
 		expandicon.Size = UDim2.fromOffset(9, 5)
 		expandicon.Position = UDim2.fromOffset(4, 4)
 		expandicon.BackgroundTransparency = 1
-		expandicon.Image = getcustomasset('newvape/assets/new/expandicon.png')
+		expandicon.Image = getcustomasset('noboline/assets/new/expandicon.png')
 		expandicon.ImageColor3 = color.Dark(uipallet.Text, 0.43)
 		expandicon.Parent = expandbutton
 		local rainbow = Instance.new('TextButton')
@@ -3312,24 +3312,24 @@ function mainapi:CreateGUI()
 		local rainbow1 = Instance.new('ImageLabel')
 		rainbow1.Size = UDim2.fromOffset(12, 12)
 		rainbow1.BackgroundTransparency = 1
-		rainbow1.Image = getcustomasset('newvape/assets/new/rainbow_1.png')
+		rainbow1.Image = getcustomasset('noboline/assets/new/rainbow_1.png')
 		rainbow1.ImageColor3 = color.Light(uipallet.Main, 0.37)
 		rainbow1.Parent = rainbow
 		local rainbow2 = rainbow1:Clone()
-		rainbow2.Image = getcustomasset('newvape/assets/new/rainbow_2.png')
+		rainbow2.Image = getcustomasset('noboline/assets/new/rainbow_2.png')
 		rainbow2.Parent = rainbow
 		local rainbow3 = rainbow1:Clone()
-		rainbow3.Image = getcustomasset('newvape/assets/new/rainbow_3.png')
+		rainbow3.Image = getcustomasset('noboline/assets/new/rainbow_3.png')
 		rainbow3.Parent = rainbow
 		local rainbow4 = rainbow1:Clone()
-		rainbow4.Image = getcustomasset('newvape/assets/new/rainbow_4.png')
+		rainbow4.Image = getcustomasset('noboline/assets/new/rainbow_4.png')
 		rainbow4.Parent = rainbow
 		local knob = Instance.new('ImageLabel')
 		knob.Name = 'Knob'
 		knob.Size = UDim2.fromOffset(26, 12)
 		knob.Position = UDim2.fromOffset(slidercolorpos[4] - 3, -5)
 		knob.BackgroundTransparency = 1
-		knob.Image = getcustomasset('newvape/assets/new/guislider.png')
+		knob.Image = getcustomasset('noboline/assets/new/guislider.png')
 		knob.ImageColor3 = slidercolors[4]
 		knob.Parent = holder
 		optionsettings.Function = optionsettings.Function or function() end
@@ -3346,8 +3346,8 @@ function mainapi:CreateGUI()
 			ColorSequenceKeypoint.new(0, Color3.fromHSV(0, 0, 0)),
 			ColorSequenceKeypoint.new(1, Color3.fromHSV(optionapi.Hue, optionapi.Sat, 1))
 		}))
-		local normalknob = getcustomasset('newvape/assets/new/guislider.png')
-		local rainbowknob = getcustomasset('newvape/assets/new/guisliderrain.png')
+		local normalknob = getcustomasset('noboline/assets/new/guislider.png')
+		local rainbowknob = getcustomasset('noboline/assets/new/guisliderrain.png')
 		local rainbowthread
 
 		function optionapi:Save(tab)
@@ -3670,7 +3670,7 @@ function mainapi:CreateCategory(categorysettings)
 	arrow.Size = UDim2.fromOffset(9, 4)
 	arrow.Position = UDim2.fromOffset(20, 18)
 	arrow.BackgroundTransparency = 1
-	arrow.Image = getcustomasset('newvape/assets/new/expandup.png')
+	arrow.Image = getcustomasset('noboline/assets/new/expandup.png')
 	arrow.ImageColor3 = Color3.fromRGB(140, 140, 140)
 	arrow.Rotation = 180
 	arrow.Parent = arrowbutton
@@ -3748,7 +3748,7 @@ function mainapi:CreateCategory(categorysettings)
 		bindicon.Size = UDim2.fromOffset(12, 12)
 		bindicon.Position = UDim2.new(0.5, -6, 0, 5)
 		bindicon.BackgroundTransparency = 1
-		bindicon.Image = getcustomasset('newvape/assets/new/bind.png')
+		bindicon.Image = getcustomasset('noboline/assets/new/bind.png')
 		bindicon.ImageColor3 = color.Dark(uipallet.Text, 0.43)
 		bindicon.Parent = bind
 		local bindtext = Instance.new('TextLabel')
@@ -3766,7 +3766,7 @@ function mainapi:CreateCategory(categorysettings)
 		bindcover.Size = UDim2.fromOffset(154, 40)
 		bindcover.BackgroundTransparency = 1
 		bindcover.Visible = false
-		bindcover.Image = getcustomasset('newvape/assets/new/bindbkg.png')
+		bindcover.Image = getcustomasset('noboline/assets/new/bindbkg.png')
 		bindcover.ScaleType = Enum.ScaleType.Slice
 		bindcover.SliceCenter = Rect.new(0, 0, 141, 40)
 		bindcover.Parent = modulebutton
@@ -3792,7 +3792,7 @@ function mainapi:CreateCategory(categorysettings)
 		dots.Size = UDim2.fromOffset(3, 16)
 		dots.Position = UDim2.fromOffset(4, 12)
 		dots.BackgroundTransparency = 1
-		dots.Image = getcustomasset('newvape/assets/new/dots.png')
+		dots.Image = getcustomasset('noboline/assets/new/dots.png')
 		dots.ImageColor3 = color.Light(uipallet.Main, 0.37)
 		dots.Parent = dotsbutton
 		modulechildren.Name = modulesettings.Name..'Children'
@@ -3879,13 +3879,13 @@ function mainapi:CreateCategory(categorysettings)
 		bind.MouseEnter:Connect(function()
 			bindtext.Visible = false
 			bindicon.Visible = not bindtext.Visible
-			bindicon.Image = getcustomasset('newvape/assets/new/edit.png')
+			bindicon.Image = getcustomasset('noboline/assets/new/edit.png')
 			if not moduleapi.Enabled then bindicon.ImageColor3 = color.Dark(uipallet.Text, 0.16) end
 		end)
 		bind.MouseLeave:Connect(function()
 			bindtext.Visible = #moduleapi.Bind > 0
 			bindicon.Visible = not bindtext.Visible
-			bindicon.Image = getcustomasset('newvape/assets/new/bind.png')
+			bindicon.Image = getcustomasset('noboline/assets/new/bind.png')
 			if not moduleapi.Enabled then
 				bindicon.ImageColor3 = color.Dark(uipallet.Text, 0.43)
 			end
@@ -4127,7 +4127,7 @@ function mainapi:CreateOverlay(categorysettings)
 	pin.Position = UDim2.new(1, -47, 0, 12)
 	pin.BackgroundTransparency = 1
 	pin.AutoButtonColor = false
-	pin.Image = getcustomasset('newvape/assets/new/pin.png')
+	pin.Image = getcustomasset('noboline/assets/new/pin.png')
 	pin.ImageColor3 = color.Dark(uipallet.Text, 0.43)
 	pin.Parent = window
 	local dotsbutton = Instance.new('TextButton')
@@ -4142,7 +4142,7 @@ function mainapi:CreateOverlay(categorysettings)
 	dots.Size = UDim2.fromOffset(3, 16)
 	dots.Position = UDim2.fromOffset(4, 12)
 	dots.BackgroundTransparency = 1
-	dots.Image = getcustomasset('newvape/assets/new/dots.png')
+	dots.Image = getcustomasset('noboline/assets/new/dots.png')
 	dots.ImageColor3 = color.Light(uipallet.Main, 0.37)
 	dots.Parent = dotsbutton
 	local customchildren = Instance.new('Frame')
@@ -4312,7 +4312,7 @@ function mainapi:CreateCategoryList(categorysettings)
 	arrow.Size = UDim2.fromOffset(9, 4)
 	arrow.Position = UDim2.fromOffset(20, 19)
 	arrow.BackgroundTransparency = 1
-	arrow.Image = getcustomasset('newvape/assets/new/expandup.png')
+	arrow.Image = getcustomasset('noboline/assets/new/expandup.png')
 	arrow.ImageColor3 = Color3.fromRGB(140, 140, 140)
 	arrow.Rotation = 180
 	arrow.Parent = arrowbutton
@@ -4338,7 +4338,7 @@ function mainapi:CreateCategoryList(categorysettings)
 	settings.Position = UDim2.new(1, -52, 0, 13)
 	settings.BackgroundTransparency = 1
 	settings.AutoButtonColor = false
-	settings.Image = getcustomasset('newvape/assets/new/customsettings.png')
+	settings.Image = getcustomasset('noboline/assets/new/customsettings.png')
 	settings.ImageColor3 = color.Dark(uipallet.Text, 0.43)
 	settings.Parent = window
 	local divider = Instance.new('Frame')
@@ -4388,7 +4388,7 @@ function mainapi:CreateCategoryList(categorysettings)
 	addbutton.Size = UDim2.fromOffset(16, 16)
 	addbutton.Position = UDim2.new(1, -26, 0, 8)
 	addbutton.BackgroundTransparency = 1
-	addbutton.Image = getcustomasset('newvape/assets/new/add.png')
+	addbutton.Image = getcustomasset('noboline/assets/new/add.png')
 	addbutton.ImageColor3 = categorysettings.Color
 	addbutton.ImageTransparency = 0.3
 	addbutton.Parent = addbkg
@@ -4405,8 +4405,8 @@ function mainapi:CreateCategoryList(categorysettings)
 				if ind then
 					if val ~= 'default' then
 						table.remove(mainapi.Profiles, ind)
-						if isfile('newvape/profiles/'..val..mainapi.Place..'.txt') and delfile then
-							delfile('newvape/profiles/'..val..mainapi.Place..'.txt')
+						if isfile('noboline/profiles/'..val..mainapi.Place..'.txt') and delfile then
+							delfile('noboline/profiles/'..val..mainapi.Place..'.txt')
 						end
 					end
 				else
@@ -4472,7 +4472,7 @@ function mainapi:CreateCategoryList(categorysettings)
 				dots.Size = UDim2.fromOffset(3, 16)
 				dots.Position = UDim2.fromOffset(10, 9)
 				dots.BackgroundTransparency = 1
-				dots.Image = getcustomasset('newvape/assets/new/dots.png')
+				dots.Image = getcustomasset('noboline/assets/new/dots.png')
 				dots.ImageColor3 = color.Light(uipallet.Main, 0.37)
 				dots.Parent = dotsbutton
 				local bind = Instance.new('TextButton')
@@ -4493,7 +4493,7 @@ function mainapi:CreateCategoryList(categorysettings)
 				bindicon.Size = UDim2.fromOffset(12, 12)
 				bindicon.Position = UDim2.new(0.5, -6, 0, 5)
 				bindicon.BackgroundTransparency = 1
-				bindicon.Image = getcustomasset('newvape/assets/new/bind.png')
+				bindicon.Image = getcustomasset('noboline/assets/new/bind.png')
 				bindicon.ImageColor3 = color.Dark(uipallet.Text, 0.43)
 				bindicon.Parent = bind
 				local bindtext = Instance.new('TextLabel')
@@ -4509,7 +4509,7 @@ function mainapi:CreateCategoryList(categorysettings)
 				bind.MouseEnter:Connect(function()
 					bindtext.Visible = false
 					bindicon.Visible = not bindtext.Visible
-					bindicon.Image = getcustomasset('newvape/assets/new/edit.png')
+					bindicon.Image = getcustomasset('noboline/assets/new/edit.png')
 					if v.Name ~= mainapi.Profile then
 						bindicon.ImageColor3 = color.Dark(uipallet.Text, 0.16)
 					end
@@ -4517,7 +4517,7 @@ function mainapi:CreateCategoryList(categorysettings)
 				bind.MouseLeave:Connect(function()
 					bindtext.Visible = #v.Bind > 0
 					bindicon.Visible = not bindtext.Visible
-					bindicon.Image = getcustomasset('newvape/assets/new/bind.png')
+					bindicon.Image = getcustomasset('noboline/assets/new/bind.png')
 					if v.Name ~= mainapi.Profile then
 						bindicon.ImageColor3 = color.Dark(uipallet.Text, 0.43)
 					end
@@ -4527,7 +4527,7 @@ function mainapi:CreateCategoryList(categorysettings)
 				bindcover.Size = UDim2.fromOffset(154, 33)
 				bindcover.BackgroundTransparency = 1
 				bindcover.Visible = false
-				bindcover.Image = getcustomasset('newvape/assets/new/bindbkg.png')
+				bindcover.Image = getcustomasset('noboline/assets/new/bindbkg.png')
 				bindcover.ScaleType = Enum.ScaleType.Slice
 				bindcover.SliceCenter = Rect.new(0, 0, 141, 40)
 				bindcover.Parent = object
@@ -4660,7 +4660,7 @@ function mainapi:CreateCategoryList(categorysettings)
 				close.BackgroundColor3 = Color3.new(1, 1, 1)
 				close.BackgroundTransparency = 1
 				close.AutoButtonColor = false
-				close.Image = getcustomasset('newvape/assets/new/closemini.png')
+				close.Image = getcustomasset('noboline/assets/new/closemini.png')
 				close.ImageColor3 = color.Light(uipallet.Text, 0.2)
 				close.ImageTransparency = 0.5
 				close.Parent = object
@@ -4826,7 +4826,7 @@ function mainapi:CreateSearch()
 	searchicon.Size = UDim2.fromOffset(14, 14)
 	searchicon.Position = UDim2.new(1, -23, 0, 11)
 	searchicon.BackgroundTransparency = 1
-	searchicon.Image = getcustomasset('newvape/assets/new/search.png')
+	searchicon.Image = getcustomasset('noboline/assets/new/search.png')
 	searchicon.ImageColor3 = color.Light(uipallet.Main, 0.37)
 	searchicon.Parent = searchbkg
 	local legiticon = Instance.new('ImageButton')
@@ -4834,7 +4834,7 @@ function mainapi:CreateSearch()
 	legiticon.Size = UDim2.fromOffset(29, 16)
 	legiticon.Position = UDim2.fromOffset(8, 11)
 	legiticon.BackgroundTransparency = 1
-	legiticon.Image = getcustomasset('newvape/assets/new/legit.png')
+	legiticon.Image = getcustomasset('noboline/assets/new/legit.png')
 	legiticon.Parent = searchbkg
 	local legitdivider = Instance.new('Frame')
 	legitdivider.Name = 'LegitDivider'
@@ -4971,7 +4971,7 @@ function mainapi:CreateLegit()
 	icon.Size = UDim2.fromOffset(16, 16)
 	icon.Position = UDim2.fromOffset(18, 13)
 	icon.BackgroundTransparency = 1
-	icon.Image = getcustomasset('newvape/assets/new/legittab.png')
+	icon.Image = getcustomasset('noboline/assets/new/legittab.png')
 	icon.ImageColor3 = uipallet.Text
 	icon.Parent = window
 	local close = addCloseButton(window)
@@ -5046,7 +5046,7 @@ function mainapi:CreateLegit()
 		dots.Size = UDim2.fromOffset(2, 12)
 		dots.Position = UDim2.fromOffset(6, 6)
 		dots.BackgroundTransparency = 1
-		dots.Image = getcustomasset('newvape/assets/new/dots.png')
+		dots.Image = getcustomasset('noboline/assets/new/dots.png')
 		dots.ImageColor3 = color.Light(uipallet.Main, 0.37)
 		dots.Parent = dotsbutton
 		local shadow = Instance.new('TextButton')
@@ -5083,7 +5083,7 @@ function mainapi:CreateLegit()
 		back.Size = UDim2.fromOffset(16, 16)
 		back.Position = UDim2.fromOffset(11, 13)
 		back.BackgroundTransparency = 1
-		back.Image = getcustomasset('newvape/assets/new/back.png')
+		back.Image = getcustomasset('noboline/assets/new/back.png')
 		back.ImageColor3 = color.Light(uipallet.Main, 0.37)
 		back.Parent = settingspane
 		addCorner(settingspane)
@@ -5278,7 +5278,7 @@ function mainapi:CreateNotification(title, text, duration, type)
 		notification.Position = UDim2.new(1, 0, 1, -(29 + (78 * i)))
 		notification.ZIndex = 5
 		notification.BackgroundTransparency = 1
-		notification.Image = getcustomasset('newvape/assets/new/notification.png')
+		notification.Image = getcustomasset('noboline/assets/new/notification.png')
 		notification.ScaleType = Enum.ScaleType.Slice
 		notification.SliceCenter = Rect.new(7, 7, 9, 9)
 		notification.Parent = notifications
@@ -5289,7 +5289,7 @@ function mainapi:CreateNotification(title, text, duration, type)
 		iconshadow.Position = UDim2.fromOffset(-5, -8)
 		iconshadow.ZIndex = 5
 		iconshadow.BackgroundTransparency = 1
-		iconshadow.Image = getcustomasset('newvape/assets/new/'..(type or 'info')..'.png')
+		iconshadow.Image = getcustomasset('noboline/assets/new/'..(type or 'info')..'.png')
 		iconshadow.ImageColor3 = Color3.new()
 		iconshadow.ImageTransparency = 0.5
 		iconshadow.Parent = notification
@@ -5367,8 +5367,8 @@ function mainapi:Load(skipgui, profile)
 	local guidata = {}
 	local savecheck = true
 
-	if isfile('newvape/profiles/'..game.GameId..'.gui.txt') then
-		guidata = loadJson('newvape/profiles/'..game.GameId..'.gui.txt')
+	if isfile('noboline/profiles/'..game.GameId..'.gui.txt') then
+		guidata = loadJson('noboline/profiles/'..game.GameId..'.gui.txt')
 		if not guidata then
 			guidata = {Categories = {}}
 			self:CreateNotification('Vape', 'Failed to load GUI settings.', 10, 'alert')
@@ -5414,8 +5414,8 @@ function mainapi:Load(skipgui, profile)
 		self.ProfileLabel.Size = UDim2.fromOffset(getfontsize(self.ProfileLabel.Text, self.ProfileLabel.TextSize, self.ProfileLabel.Font).X + 16, 24)
 	end
 
-	if isfile('newvape/profiles/'..self.Profile..self.Place..'.txt') then
-		local savedata = loadJson('newvape/profiles/'..self.Profile..self.Place..'.txt')
+	if isfile('noboline/profiles/'..self.Profile..self.Place..'.txt') then
+		local savedata = loadJson('noboline/profiles/'..self.Profile..self.Place..'.txt')
 		if not savedata then
 			savedata = {Categories = {}, Modules = {}, Legit = {}}
 			self:CreateNotification('Vape', 'Failed to load '..self.Profile..' profile.', 10, 'alert')
@@ -5499,7 +5499,7 @@ function mainapi:Load(skipgui, profile)
 		image.Size = UDim2.fromOffset(26, 26)
 		image.Position = UDim2.fromOffset(3, 3)
 		image.BackgroundTransparency = 1
-		image.Image = getcustomasset('newvape/assets/new/vape.png')
+		image.Image = getcustomasset('noboline/assets/new/vape.png')
 		image.Parent = button
 		local buttoncorner = Instance.new('UICorner')
 		buttoncorner.Parent = button
@@ -5594,8 +5594,8 @@ function mainapi:Save(newprofile)
 		}
 	end
 
-	writefile('newvape/profiles/'..game.GameId..'.gui.txt', httpService:JSONEncode(guidata))
-	writefile('newvape/profiles/'..self.Profile..self.Place..'.txt', httpService:JSONEncode(savedata))
+	writefile('noboline/profiles/'..game.GameId..'.gui.txt', httpService:JSONEncode(guidata))
+	writefile('noboline/profiles/'..self.Profile..self.Place..'.txt', httpService:JSONEncode(savedata))
 end
 
 function mainapi:SaveOptions(object, savedoptions)
@@ -5764,37 +5764,37 @@ mainapi:CreateGUI()
 mainapi.Categories.Main:CreateDivider()
 mainapi:CreateCategory({
 	Name = 'Combat',
-	Icon = getcustomasset('newvape/assets/new/combaticon.png'),
+	Icon = getcustomasset('noboline/assets/new/combaticon.png'),
 	Size = UDim2.fromOffset(13, 14)
 })
 mainapi:CreateCategory({
 	Name = 'Blatant',
-	Icon = getcustomasset('newvape/assets/new/blatanticon.png'),
+	Icon = getcustomasset('noboline/assets/new/blatanticon.png'),
 	Size = UDim2.fromOffset(14, 14)
 })
 mainapi:CreateCategory({
 	Name = 'Render',
-	Icon = getcustomasset('newvape/assets/new/rendericon.png'),
+	Icon = getcustomasset('noboline/assets/new/rendericon.png'),
 	Size = UDim2.fromOffset(15, 14)
 })
 mainapi:CreateCategory({
 	Name = 'Utility',
-	Icon = getcustomasset('newvape/assets/new/utilityicon.png'),
+	Icon = getcustomasset('noboline/assets/new/utilityicon.png'),
 	Size = UDim2.fromOffset(15, 14)
 })
 mainapi:CreateCategory({
 	Name = 'World',
-	Icon = getcustomasset('newvape/assets/new/worldicon.png'),
+	Icon = getcustomasset('noboline/assets/new/worldicon.png'),
 	Size = UDim2.fromOffset(14, 14)
 })
 mainapi:CreateCategory({
 	Name = 'Inventory',
-	Icon = getcustomasset('newvape/assets/new/inventoryicon.png'),
+	Icon = getcustomasset('noboline/assets/new/inventoryicon.png'),
 	Size = UDim2.fromOffset(15, 14)
 })
 mainapi:CreateCategory({
 	Name = 'Minigames',
-	Icon = getcustomasset('newvape/assets/new/miniicon.png'),
+	Icon = getcustomasset('noboline/assets/new/miniicon.png'),
 	Size = UDim2.fromOffset(19, 12)
 })
 mainapi.Categories.Main:CreateDivider('misc')
@@ -5810,7 +5810,7 @@ local friendscolor = {
 }
 local friendssettings = {
 	Name = 'Friends',
-	Icon = getcustomasset('newvape/assets/new/friendstab.png'),
+	Icon = getcustomasset('noboline/assets/new/friendstab.png'),
 	Size = UDim2.fromOffset(17, 16),
 	Placeholder = 'Roblox username',
 	Color = Color3.fromRGB(5, 134, 105),
@@ -5863,7 +5863,7 @@ mainapi:Clean(friends.ColorUpdate)
 ]]
 mainapi:CreateCategoryList({
 	Name = 'Profiles',
-	Icon = getcustomasset('newvape/assets/new/profilesicon.png'),
+	Icon = getcustomasset('noboline/assets/new/profilesicon.png'),
 	Size = UDim2.fromOffset(17, 10),
 	Position = UDim2.fromOffset(12, 16),
 	Placeholder = 'Type name',
@@ -5876,7 +5876,7 @@ mainapi:CreateCategoryList({
 local targets
 targets = mainapi:CreateCategoryList({
 	Name = 'Targets',
-	Icon = getcustomasset('newvape/assets/new/friendstab.png'),
+	Icon = getcustomasset('noboline/assets/new/friendstab.png'),
 	Size = UDim2.fromOffset(17, 16),
 	Placeholder = 'Roblox username',
 	Function = function()
@@ -5904,14 +5904,14 @@ general:CreateButton({
 	Name = 'Reset current profile',
 	Function = function()
 	mainapi.Save = function() end
-		if isfile('newvape/profiles/'..mainapi.Profile..mainapi.Place..'.txt') and delfile then
-			delfile('newvape/profiles/'..mainapi.Profile..mainapi.Place..'.txt')
+		if isfile('noboline/profiles/'..mainapi.Profile..mainapi.Place..'.txt') and delfile then
+			delfile('noboline/profiles/'..mainapi.Profile..mainapi.Place..'.txt')
 		end
 		shared.vapereload = true
 		if shared.VapeDeveloper then
-			loadstring(readfile('newvape/loader.lua'), 'loader')()
+			loadstring(readfile('noboline/loader.lua'), 'loader')()
 		else
-			loadstring(game:HttpGet('https://raw.githubusercontent.com/7GrandDadPGN/VapeV4ForRoblox/'..readfile('newvape/profiles/commit.txt')..'/loader.lua', true))()
+			loadstring(game:HttpGet('https://raw.githubusercontent.com/nobalone/noboline/'..readfile('noboline/profiles/commit.txt')..'/loader.lua', true))()
 		end
 	end,
 	Tooltip = 'This will set your profile to the default settings of Vape'
@@ -5928,9 +5928,9 @@ general:CreateButton({
 	Function = function()
 		shared.vapereload = true
 		if shared.VapeDeveloper then
-			loadstring(readfile('newvape/loader.lua'), 'loader')()
+			loadstring(readfile('noboline/loader.lua'), 'loader')()
 		else
-			loadstring(game:HttpGet('https://raw.githubusercontent.com/7GrandDadPGN/VapeV4ForRoblox/'..readfile('newvape/profiles/commit.txt')..'/loader.lua', true))()
+			loadstring(game:HttpGet('https://raw.githubusercontent.com/nobalone/noboline/'..readfile('noboline/profiles/commit.txt')..'/loader.lua', true))()
 		end
 	end,
 	Tooltip = 'Reloads vape for debugging purposes'
@@ -6033,12 +6033,12 @@ guipane:CreateDropdown({
 	List = inputService.TouchEnabled and {'new', 'old'} or {'new', 'old', 'rise'},
 	Function = function(val, mouse)
 		if mouse then
-			writefile('newvape/profiles/gui.txt', val)
+			writefile('noboline/profiles/gui.txt', val)
 			shared.vapereload = true
 			if shared.VapeDeveloper then
-				loadstring(readfile('newvape/loader.lua'), 'loader')()
+				loadstring(readfile('noboline/loader.lua'), 'loader')()
 			else
-				loadstring(game:HttpGet('https://raw.githubusercontent.com/7GrandDadPGN/VapeV4ForRoblox/'..readfile('newvape/profiles/commit.txt')..'/loader.lua', true))()
+				loadstring(game:HttpGet('https://raw.githubusercontent.com/nobalone/noboline/'..readfile('noboline/profiles/commit.txt')..'/loader.lua', true))()
 			end
 		end
 	end,
@@ -6146,7 +6146,7 @@ mainapi.Categories.Main:CreateBind()
 
 local textgui = mainapi:CreateOverlay({
 	Name = 'Text GUI',
-	Icon = getcustomasset('newvape/assets/new/textguiicon.png'),
+	Icon = getcustomasset('noboline/assets/new/textguiicon.png'),
 	Size = UDim2.fromOffset(16, 12),
 	Position = UDim2.fromOffset(12, 14),
 	Function = function()
@@ -6280,8 +6280,8 @@ local textguimodules = textgui:CreateToggle({
 textguimoduleslist = textgui:CreateTextList({
 	Name = 'Blacklist',
 	Tooltip = 'Name of module to hide.',
-	Icon = getcustomasset('newvape/assets/new/blockedicon.png'),
-	Tab = getcustomasset('newvape/assets/new/blockedtab.png'),
+	Icon = getcustomasset('noboline/assets/new/blockedicon.png'),
+	Tab = getcustomasset('noboline/assets/new/blockedtab.png'),
 	TabSize = UDim2.fromOffset(21, 16),
 	Color = Color3.fromRGB(250, 50, 56),
 	Function = function()
@@ -6358,7 +6358,7 @@ VapeLogo.BackgroundTransparency = 1
 VapeLogo.BorderSizePixel = 0
 VapeLogo.Visible = false
 VapeLogo.BackgroundColor3 = Color3.new()
-VapeLogo.Image = getcustomasset('newvape/assets/new/textvape.png')
+VapeLogo.Image = getcustomasset('noboline/assets/new/textvape.png')
 VapeLogo.Parent = textgui.Children
 
 local lastside = textgui.Children.AbsolutePosition.X > (gui.AbsoluteSize.X / 2)
@@ -6380,7 +6380,7 @@ VapeLogoV4.Position = UDim2.new(1, 1, 0, 1)
 VapeLogoV4.BackgroundColor3 = Color3.new()
 VapeLogoV4.BackgroundTransparency = 1
 VapeLogoV4.BorderSizePixel = 0
-VapeLogoV4.Image = getcustomasset('newvape/assets/new/textv4.png')
+VapeLogoV4.Image = getcustomasset('noboline/assets/new/textv4.png')
 VapeLogoV4.Parent = VapeLogo
 local VapeLogoShadow = VapeLogo:Clone()
 VapeLogoShadow.Position = UDim2.fromOffset(1, 1)
@@ -6450,7 +6450,7 @@ local targetinfoobj
 local targetinfobcolor
 targetinfoobj = mainapi:CreateOverlay({
 	Name = 'Target Info',
-	Icon = getcustomasset('newvape/assets/new/targetinfoicon.png'),
+	Icon = getcustomasset('noboline/assets/new/targetinfoicon.png'),
 	Size = UDim2.fromOffset(14, 14),
 	Position = UDim2.fromOffset(12, 14),
 	CategorySize = 240,
