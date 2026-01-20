@@ -1,4 +1,5 @@
 --This watermark is used to delete the file if its cached, remove it to make the file persist after vape updates.
+--This watermark is used to delete the file if its cached, remove it to make the file persist after vape updates.
 local run = function(func)
 	func()
 end
@@ -8606,7 +8607,131 @@ run(function()
 		end
 	})
 end)
-	
+run(function()
+    local pack1
+	local packassetids = {
+		['Exhibition'] = 'rbxassetid://14060102755',
+		['err'] = 'rbxassetid://13782395340',
+		['err'] = 'rbxassetid://14312698987',
+		['err'] = 'rbxassetid://14390823554',
+		['err'] = 'rbxassetid://14415658661',
+		['Chrome'] = 'rbxassetid://14258942293',
+		['err'] = 'rbxassetid://14274833803',
+		['err'] = 'rbxassetid://14614456664',
+		['err'] = 'rbxassetid://14217402799',
+		['err'] = 'rbxassetid://93716357946641',
+		['err'] = 'rbxassetid://13780890894',
+		['err'] = 'rbxassetid://14254581941',
+		['err'] = 'rbxassetid://14190963148',
+		['err'] = 'rbxassetid://13801616054',
+		['Noboline'] = 'rbxassetid://14654171957',
+		['Minecraft Swords'] = 'rbxassetid://14427750969',
+		['Snoopy'] = 'rbxassetid://14126814481',
+		['err'] = 'rbxassetid://14033898270',
+	}
+    local TexturePacks 
+	TexturePacks = vape.Categories.Render:CreateModule({
+        Name = 'TexturePacks',
+        Tooltip = 'Gives you a cool unique textures for tools.',
+        Function = function(call)
+            if call then
+				local import = game:GetObjects(packassetids[pack1.Value])[1]
+				import.Parent = replicatedStorage
+				local index = {
+					{
+						name = "wood_sword",
+						offset = CFrame.Angles(math.rad(0),math.rad(-89),math.rad(-90)),
+						model = import:WaitForChild("Wood_Sword"),
+					},
+					{
+						name = "stone_sword",
+						offset = CFrame.Angles(math.rad(0),math.rad(-89),math.rad(-90)),
+						model = import:WaitForChild("Stone_Sword"),
+					},
+					{
+						name = "iron_sword",
+						offset = CFrame.Angles(math.rad(0),math.rad(-89),math.rad(-90)),
+						model = import:WaitForChild("Iron_Sword"),
+					},
+					{
+						name = "diamond_sword",
+						offset = CFrame.Angles(math.rad(0),math.rad(-89),math.rad(-90)),
+						model = import:WaitForChild("Diamond_Sword"),
+					},
+					{
+						name = "emerald_sword",
+						offset = CFrame.Angles(math.rad(0),math.rad(-89),math.rad(-90)),
+						model = import:WaitForChild("Emerald_Sword"),
+					},
+				}
+				for i,v in {'Wood', 'Diamond', 'Emerald', 'Stone', 'Iron', 'Gold'} do
+					if import:FindFirstChild(`{v}_Pickaxe`) then
+						table.insert(index, {
+							name = `{v:lower()}_pickaxe`,
+							offset = CFrame.Angles(math.rad(0), math.rad(-180), math.rad(-95)),
+							model = import[`{v}_Pickaxe`],
+						})
+					end
+					if import:FindFirstChild(v) then
+						table.insert(index, {
+							name = `{v:lower()}`,
+							offset = CFrame.Angles(math.rad(0),math.rad(-90),math.rad(table.find({'Emerald', 'Diamond'}, v) and 90 or -90)),
+							model = import[`{v}`],
+						})
+					end
+				end
+				TexturePacks:Clean(workspace.Camera.Viewmodel.ChildAdded:Connect(function(tool)
+					if(not tool:IsA("Accessory")) then return end
+					for i,v in pairs(index) do
+						if(v.name == tool.Name) then
+							for i,v in pairs(tool:GetDescendants()) do
+								if(v:IsA("Part") or v:IsA("MeshPart") or v:IsA("UnionOperation")) then
+									v.Transparency = 1
+								end
+							end
+							local model = v.model:Clone()
+							model.CFrame = tool:WaitForChild("Handle").CFrame * v.offset
+							model.CFrame *= CFrame.Angles(math.rad(0),math.rad(-50),math.rad(0))
+							model.Parent = tool
+							local weld = Instance.new("WeldConstraint",model)
+							weld.Part0 = model
+							weld.Part1 = tool:WaitForChild("Handle")
+							local tool2 = lplr.Character:WaitForChild(tool.Name)
+							for i,v in pairs(tool2:GetDescendants()) do
+								if(v:IsA("Part") or v:IsA("MeshPart") or v:IsA("UnionOperation")) then
+									v.Transparency = 1
+								end            
+							end            
+							local model2 = v.model:Clone()
+							model2.Anchored = false
+							model2.CFrame = tool2:WaitForChild("Handle").CFrame * v.offset
+							model2.CFrame *= CFrame.Angles(math.rad(0),math.rad(-50),math.rad(0))
+							model2.CFrame *= CFrame.new(0.6,0,-.9)
+							model2.Parent = tool2
+							local weld2 = Instance.new("WeldConstraint",model)
+							weld2.Part0 = model2
+							weld2.Part1 = tool2:WaitForChild("Handle")
+						end
+					end
+				end))
+            end
+        end
+    })
+	local list = {}
+	for i,v in packassetids do
+		table.insert(list, i)
+	end
+    pack1 = TexturePacks:CreateDropdown({
+        Name = 'Pack',
+        List = list,
+		Function = function()
+			if TexturePacks.Enabled then
+				TexturePacks:Toggle()
+				TexturePacks:Toggle()
+			end
+		end
+    })
+end)
 run(function()
 	local WinEffect
 	local List
