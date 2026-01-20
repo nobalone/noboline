@@ -31,7 +31,7 @@ local playersService = cloneref(game:GetService('Players'))
 local function downloadFile(path, func)
 	if not isfile(path) then
 		local suc, res = pcall(function()
-			return game:HttpGet('https://raw.githubusercontent.com/nobalone/noboline/'..readfile('newvape/profiles/commit.txt')..'/'..select(1, path:gsub('newvape/', '')), true)
+			return game:HttpGet('https://raw.githubusercontent.com/nobalone/noboline/'..readfile('noboline/profiles/commit.txt')..'/'..select(1, path:gsub('noboline/', '')), true)
 		end)
 		if not suc or res == '404: Not Found' then
 			error(res)
@@ -61,9 +61,9 @@ local function finishLoading()
 			local teleportScript = [[
 				shared.vapereload = true
 				if shared.VapeDeveloper then
-					loadstring(readfile('newvape/loader.lua'), 'loader')()
+					loadstring(readfile('noboline/loader.lua'), 'loader')()
 				else
-					loadstring(game:HttpGet('https://raw.githubusercontent.com/nobalone/noboline/'..readfile('newvape/profiles/commit.txt')..'/loader.lua', true), 'loader')()
+					loadstring(game:HttpGet('https://raw.githubusercontent.com/nobalone/noboline/'..readfile('noboline/profiles/commit.txt')..'/loader.lua', true), 'loader')()
 				end
 			]]
 			if shared.VapeDeveloper then
@@ -85,28 +85,28 @@ local function finishLoading()
 	end
 end
 
-if not isfile('newvape/profiles/gui.txt') then
-	writefile('newvape/profiles/gui.txt', 'new')
+if not isfile('noboline/profiles/gui.txt') then
+	writefile('noboline/profiles/gui.txt', 'new')
 end
-local gui = readfile('newvape/profiles/gui.txt')
+local gui = readfile('noboline/profiles/gui.txt')
 
-if not isfolder('newvape/assets/'..gui) then
-	makefolder('newvape/assets/'..gui)
+if not isfolder('noboline/assets/'..gui) then
+	makefolder('noboline/assets/'..gui)
 end
-vape = loadstring(downloadFile('newvape/guis/'..gui..'.lua'), 'gui')()
+vape = loadstring(downloadFile('noboline/guis/'..gui..'.lua'), 'gui')()
 shared.vape = vape
 
 if not shared.VapeIndependent then
-	loadstring(downloadFile('newvape/games/universal.lua'), 'universal')()
-	if isfile('newvape/games/'..game.PlaceId..'.lua') then
-		loadstring(readfile('newvape/games/'..game.PlaceId..'.lua'), tostring(game.PlaceId))(...)
+	loadstring(downloadFile('noboline/games/universal.lua'), 'universal')()
+	if isfile('noboline/games/'..game.PlaceId..'.lua') then
+		loadstring(readfile('noboline/games/'..game.PlaceId..'.lua'), tostring(game.PlaceId))(...)
 	else
 		if not shared.VapeDeveloper then
 			local suc, res = pcall(function()
-				return game:HttpGet('https://raw.githubusercontent.com/nobalone/noboline/'..readfile('newvape/profiles/commit.txt')..'/games/'..game.PlaceId..'.lua', true)
+				return game:HttpGet('https://raw.githubusercontent.com/nobalone/noboline/'..readfile('noboline/profiles/commit.txt')..'/games/'..game.PlaceId..'.lua', true)
 			end)
 			if suc and res ~= '404: Not Found' then
-				loadstring(downloadFile('newvape/games/'..game.PlaceId..'.lua'), tostring(game.PlaceId))(...)
+				loadstring(downloadFile('noboline/games/'..game.PlaceId..'.lua'), tostring(game.PlaceId))(...)
 			end
 		end
 	end
