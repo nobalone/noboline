@@ -11,7 +11,7 @@ end
 local function downloadFile(path, func)
 	if not isfile(path) then
 		local suc, res = pcall(function()
-			return game:HttpGet('https://raw.githubusercontent.com/nobalone/noboline/'..readfile('newvape/profiles/commit.txt')..'/'..select(1, path:gsub('newvape/', '')), true)
+			return game:HttpGet('https://raw.githubusercontent.com/nobalone/noboline/'..readfile('noboline/profiles/commit.txt')..'/'..select(1, path:gsub('noboline/', '')), true)
 		end)
 		if not suc or res == '404: Not Found' then
 			error(res)
@@ -34,7 +34,7 @@ local function wipeFolder(path)
 	end
 end
 
-for _, folder in {'newvape', 'newvape/games', 'newvape/profiles', 'newvape/assets', 'newvape/libraries', 'newvape/guis'} do
+for _, folder in {'noboline', 'noboline/games', 'noboline/profiles', 'noboline/assets', 'noboline/libraries', 'noboline/guis'} do
 	if not isfolder(folder) then
 		makefolder(folder)
 	end
@@ -47,13 +47,13 @@ if not shared.VapeDeveloper then
 	local commit = subbed:find('currentOid')
 	commit = commit and subbed:sub(commit + 13, commit + 52) or nil
 	commit = commit and #commit == 40 and commit or 'main'
-	if commit == 'main' or (isfile('newvape/profiles/commit.txt') and readfile('newvape/profiles/commit.txt') or '') ~= commit then
-		wipeFolder('newvape')
-		wipeFolder('newvape/games')
-		wipeFolder('newvape/guis')
-		wipeFolder('newvape/libraries')
+	if commit == 'main' or (isfile('noboline/profiles/commit.txt') and readfile('noboline/profiles/commit.txt') or '') ~= commit then
+		wipeFolder('noboline')
+		wipeFolder('noboline/games')
+		wipeFolder('noboline/guis')
+		wipeFolder('noboline/libraries')
 	end
-	writefile('newvape/profiles/commit.txt', commit)
+	writefile('noboline/profiles/commit.txt', commit)
 end
 
-return loadstring(downloadFile('newvape/main.lua'), 'main')()
+return loadstring(downloadFile('noboline/main.lua'), 'main')()
