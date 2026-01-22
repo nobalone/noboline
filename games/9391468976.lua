@@ -28,7 +28,7 @@ local function downloadFile(path, func)
 	return (func or readfile)(path)
 end
 
-vape.Place = 6872274481
+vape.Place = 6872265039
 if isfile('noboline/games/'..vape.Place..'.lua') then
 	loadstring(readfile('noboline/games/'..vape.Place..'.lua'), 'bedwars')()
 else
