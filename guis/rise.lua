@@ -58,7 +58,7 @@ local tween = {
 	tweenstwo = {}
 }
 local uipallet = {
-	Main = Color3.fromRGB(23, 26, 33),
+	Main = Color3.fromRGB(30, 16, 30),
 	MainColor = Color3.fromRGB(12, 163, 232),
 	SecondaryColor = Color3.fromRGB(12, 232, 199),
 	Text = Color3.new(1, 1, 1),
