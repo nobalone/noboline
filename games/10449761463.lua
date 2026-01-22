@@ -477,6 +477,224 @@ run(function()
 		end
 	})
 end)
+						run(function()
+    local RainbowGarou
+    local Speed
+    local Brightness
+    local ShowNotification
+    local ApplyToAll
+    
+    -- Check if game is TSB
+    if game.PlaceId ~= 10449761463 then
+        notif('Rainbow Garou', 'This module only works in The Strongest Battlegrounds!', 10, 'warning')
+        return
+    end
+    
+    -- Function for balanced rainbow color
+    local function rainbowColorBalanced(t, brightness)
+        local r = math.sin(t * 5) * 0.5 + 0.5
+        local g = math.sin(t * 5 + 2) * 0.5 + 0.5
+        local b = math.sin(t * 5 + 4) * 0.5 + 0.5
+        
+        local minBright = math.clamp(brightness - 0.3, 0.1, 0.7)
+        local maxBright = math.clamp(brightness + 0.1, 0.3, 1)
+        
+        r = math.clamp(r, minBright, maxBright)
+        g = math.clamp(g, minBright, maxBright)
+        b = math.clamp(b, minBright, maxBright)
+        
+        return Color3.new(r, g, b)
+    end
+    
+    -- Apply rainbow to a character
+    local function applyRainbow(char, enabled)
+        if not char then return end
+        
+        local connections = {}
+        
+        -- Left Arm
+        if char:FindFirstChild('Left Arm') then
+            table.insert(connections, char['Left Arm'].ChildAdded:Connect(function(pp)
+                if not enabled() then return end
+                if pp.Name == "WaterPalm" then
+                    local emitters = pp:WaitForChild('ConstantEmit', 2)
+                    local trail = pp:WaitForChild('WaterTrail', 2)
+                    
+                    if emitters and trail then
+                        task.spawn(function()
+                            local t = 0
+                            while pp.Parent and enabled() do
+                                local color = rainbowColorBalanced(t, Brightness.Value)
+                                for _, v in pairs(emitters:GetChildren()) do
+                                    if v:IsA("ParticleEmitter") then
+                                        v.Color = ColorSequence.new(color, color)
+                                    end
+                                end
+                                trail.Color = ColorSequence.new(color, color)
+                                t = t + (Speed.Value / 100)
+                                task.wait(0.03)
+                            end
+                        end)
+                    end
+                end
+            end))
+        end
+        
+        -- Right Arm
+        if char:FindFirstChild('Right Arm') then
+            table.insert(connections, char['Right Arm'].ChildAdded:Connect(function(pp)
+                if not enabled() then return end
+                if pp.Name == "WaterPalm" then
+                    local emitters = pp:WaitForChild('ConstantEmit', 2)
+                    local trail = pp:WaitForChild('WaterTrail', 2)
+                    
+                    if emitters and trail then
+                        task.spawn(function()
+                            local t = 0
+                            while pp.Parent and enabled() do
+                                local color = rainbowColorBalanced(t, Brightness.Value)
+                                for _, v in pairs(emitters:GetChildren()) do
+                                    if v:IsA("ParticleEmitter") then
+                                        v.Color = ColorSequence.new(color, color)
+                                    end
+                                end
+                                trail.Color = ColorSequence.new(color, color)
+                                t = t + (Speed.Value / 100)
+                                task.wait(0.03)
+                            end
+                        end)
+                    end
+                end
+            end))
+        end
+        
+        -- Effects
+        table.insert(connections, char.ChildAdded:Connect(function(pp)
+            if not enabled() then return end
+            if pp.Name == "Effects" then
+                task.spawn(function()
+                    local t = 0
+                    while pp.Parent and enabled() do
+                        for _, v in pairs(pp:GetDescendants()) do
+                            if v:IsA("ParticleEmitter") then
+                                local color = rainbowColorBalanced(t, Brightness.Value)
+                                v.Color = ColorSequence.new(color, color)
+                            end
+                        end
+                        t = t + (Speed.Value / 100)
+                        task.wait(0.03)
+                    end
+                end)
+            end
+        end))
+        
+        return connections
+    end
+    
+    RainbowGarou = vape.Categories.Render:CreateModule({
+        Name = 'Rainbow Garou',
+        Function = function(callback)
+            if callback then
+                -- Check if player is using Garou
+                local charName = getCharacterName()
+                if charName ~= 'Garou' and not ApplyToAll.Enabled then
+                    notif('Rainbow Garou', 'You must be using Garou! (or enable "Apply To All")', 5, 'warning')
+                    RainbowGarou:Toggle()
+                    return
+                end
+                
+                if ShowNotification.Enabled then
+                    notif('Rainbow Garou', 'Rainbow effects enabled!', 3, 'success')
+                end
+                
+                -- Apply to current character
+                if entitylib.isAlive then
+                    local connections = applyRainbow(lplr.Character, function() 
+                        return RainbowGarou.Enabled 
+                    end)
+                    
+                    if connections then
+                        for _, conn in connections do
+                            RainbowGarou:Clean(conn)
+                        end
+                    end
+                end
+                
+                -- Apply to future characters
+                RainbowGarou:Clean(lplr.CharacterAdded:Connect(function(char)
+                    task.wait(0.5)
+                    
+                    if not RainbowGarou.Enabled then return end
+                    
+                    local charName = getCharacterName()
+                    if charName ~= 'Garou' and not ApplyToAll.Enabled then
+                        return
+                    end
+                    
+                    local connections = applyRainbow(char, function() 
+                        return RainbowGarou.Enabled 
+                    end)
+                    
+                    if connections then
+                        for _, conn in connections do
+                            RainbowGarou:Clean(conn)
+                        end
+                    end
+                end))
+                
+                -- Apply rainbow to existing effects
+                if entitylib.isAlive then
+                    for _, part in pairs(lplr.Character:GetChildren()) do
+                        if part.Name == 'Effects' then
+                            task.spawn(function()
+                                local t = 0
+                                while part.Parent and RainbowGarou.Enabled do
+                                    for _, v in pairs(part:GetDescendants()) do
+                                        if v:IsA("ParticleEmitter") then
+                                            local color = rainbowColorBalanced(t, Brightness.Value)
+                                            v.Color = ColorSequence.new(color, color)
+                                        end
+                                    end
+                                    t = t + (Speed.Value / 100)
+                                    task.wait(0.03)
+                                end
+                            end)
+                        end
+                    end
+                end
+            end
+        end,
+        Tooltip = 'Makes Garou water effects rainbow colored'
+    })
+    
+    Speed = RainbowGarou:CreateSlider({
+        Name = 'Rainbow Speed',
+        Min = 1,
+        Max = 20,
+        Default = 5,
+        Tooltip = 'How fast the colors cycle'
+    })
+    
+    Brightness = RainbowGarou:CreateSlider({
+        Name = 'Brightness',
+        Min = 0,
+        Max = 1,
+        Default = 0.6,
+        Decimal = 10,
+        Tooltip = 'Brightness of the rainbow colors'
+    })
+    
+    ShowNotification = RainbowGarou:CreateToggle({
+        Name = 'Show Notifications',
+        Default = true
+    })
+    
+    ApplyToAll = RainbowGarou:CreateToggle({
+        Name = 'Apply To All Characters',
+        Default = false,
+        Tooltip = 'Apply rainbow effects to all characters, not just Garou'
+    })
+end)
 -- Export
 _G.TSB = tsb
 _G.TSBStore = store
