@@ -316,81 +316,167 @@ end
 
 -- Example modules starter
 run(function()
-    local AutoBlock
-    local Range
-    local Targets
-    
-    AutoBlock = vape.Categories.Combat:CreateModule({
-        Name = 'AutoBlock',
-        Function = function(callback)
-            if callback then
-                AutoBlock:Clean(runService.Heartbeat:Connect(function()
-                    if entitylib.isAlive then
-                        local plr = entitylib.EntityPosition({
-                            Range = Range.Value,
-                            Part = 'RootPart',
-                            Players = Targets.Players.Enabled,
-                            NPCs = Targets.NPCs.Enabled
-                        })
-                        
-                        local blocking = lplr.Character:GetAttribute('Blocking')
-                        
-                        if plr and not blocking then
-                            -- Start blocking
-                            vim:SendKeyEvent(true, Enum.KeyCode.F, false, game)
-                        elseif not plr and blocking then
-                            -- Stop blocking
-                            vim:SendKeyEvent(false, Enum.KeyCode.F, false, game)
-                        end
-                    end
-                end))
-            else
-                -- Release block key
-                vim:SendKeyEvent(false, Enum.KeyCode.F, false, game)
-            end
-        end,
-        Tooltip = 'Automatically blocks when enemies are nearby'
-    })
-    
-    Targets = AutoBlock:CreateTargets({
-        Players = true,
-        NPCs = false
-    })
-    
-    Range = AutoBlock:CreateSlider({
-        Name = 'Range',
-        Min = 5,
-        Max = 30,
-        Default = 15,
-        Suffix = function(val)
-            return val == 1 and 'stud' or 'studs'
-        end
-    })
+	local old
+	
+	vape.Categories.Blatant:CreateModule({
+		Name = 'NoSlowdown',
+		Function = function(callback)
+			local modifier = bedwars.SprintController:getMovementStatusModifier()
+			if callback then
+				old = modifier.addModifier
+				modifier.addModifier = function(self, tab)
+					if tab.moveSpeedMultiplier then
+						tab.moveSpeedMultiplier = math.max(tab.moveSpeedMultiplier, 1)
+					end
+					return old(self, tab)
+				end
+	
+				for i in modifier.modifiers do
+					if (i.moveSpeedMultiplier or 1) < 1 then
+						modifier:removeModifier(i)
+					end
+				end
+			else
+				modifier.addModifier = old
+				old = nil
+			end
+		end,
+		Tooltip = 'Prevents slowing down when using items.'
+	})
 end)
-
 run(function()
-    local Sprint
-    
-    Sprint = vape.Categories.Combat:CreateModule({
-        Name = 'Sprint',
-        Function = function(callback)
-            if callback then
-                Sprint:Clean(runService.Heartbeat:Connect(function()
-                    if entitylib.isAlive and entitylib.character.Humanoid.MoveDirection.Magnitude > 0 then
-                        local sprinting = lplr.Character:GetAttribute('Sprinting')
-                        if not sprinting then
-                            vim:SendKeyEvent(true, Enum.KeyCode.LeftShift, false, game)
-                            task.wait(0.05)
-                            vim:SendKeyEvent(false, Enum.KeyCode.LeftShift, false, game)
-                        end
-                    end
-                end))
-            end
-        end,
-        Tooltip = 'Automatically sprint when moving'
-    })
+	local PlayerAttach
+	local Range
+	local Targets
+	local Sorts
+	PlayerAttach = vape.Categories.Blatant:CreateModule({
+		Name = "PlayerAttach",
+		Tooltip = 'teleports you the closest player/npc near you in a specific range',
+		Function = function(callback)
+			if callback then
+				repeat 
+					local plrs = entitylib.AllPosition({
+						Range = Range.Value,
+						Wallcheck = Targets.Walls.Enabled,
+						Part = "RootPart",
+						Players = Targets.Players.Enabled,
+						NPCs = Targets.NPCs.Enabled,
+						Limit = 1,
+						Sort = sortmethods[Sorts.Value]
+					})
+					local char = entitylib.character
+					local root = char.RootPart
+					if plrs then
+						local ent = plrs[1]
+						if ent and ent.RootPart then
+							local Pos = ent.RootPart.Position
+							local Vec = entitylib.character.RootPart.CFrame.LookVector
+							local Delta = CFrame.lookAlong(Pos, Vec)
+							entitylib.character.RootPart.CFrame = Delta
+						end
+					end
+					task.wait(1.05 - math.random())
+				until not PlayerAttach.Enabled
+			end
+		end
+	})
+	Range = PlayerAttach:CreateSlider({
+		Name = "Distance",
+		Min = 0,
+		Max = 32,
+		Default = 16,
+		Suffix = function(val)
+			if val == 1 then
+				return 'stud'
+			else
+				return 'studs'
+			end
+		end
+	})
+	Targets = PlayerAttach:CreateTargets({
+		Players=true,
+		Walls=true,
+		NPCs=true
+	})
+	Sorts = PlayerAttach:CreateDropdown({
+		Name = "Sorts",
+		List = {'Damage','Threat','Kit','Health','Angle'}
+	})
 end)
-
+run(function()
+	local RemoveStatus
+	local old
+	RemoveStatus = vape.Categories.Render:CreateModule({
+		Name = "NoRender",
+		Tooltip = 'a',
+		Function = function(callback)
+			if callback then
+				old = bedwars.VignetteController.createVignette
+			    bedwars.VignetteController.createVignette = function(...)
+					return nil
+				end
+			else
+				bedwars.VignetteController.createVignette = old
+				old = nil
+			end
+		end
+	})
+end)
+run(function()
+	local BackTrackIncoming = {}
+	local KPS
+	local BackTrack = vape.Categories.World:CreateModule({
+		Name = "BackTrack", 
+		Function = function(callback)  
+			if callback then
+				game:GetService("NetworkClient"):SetOutgoingKBPSLimit(KPS.Value)
+				if BackTrackIncoming.Enabled then 
+					settings():GetService("NetworkSettings").IncomingReplicationLag = KPS.Value * 3
+				end
+			else
+				game:GetService("NetworkClient"):SetOutgoingKBPSLimit(math.huge)
+				if BackTrackIncoming.Enabled then 
+					settings():GetService("NetworkSettings").IncomingReplicationLag = 0
+				end
+			end
+		end, 
+		Tooltip = "PositionRaper"
+	})
+	BackTrackIncoming = BackTrack:CreateToggle({
+		Name = "Incoming",
+		Function = function(callback)
+			if callback then
+				if BackTrack.Enabled then 
+					settings():GetService("NetworkSettings").IncomingReplicationLag = 99999999
+				end
+			else
+				if BackTrack.Enabled then 
+					settings():GetService("NetworkSettings").IncomingReplicationLag = 0
+				end
+			end
+		end
+	})
+	KPS = BackTrack:CreateSlider({
+		Name = "KPS Limit",
+		Max = 250,
+		Min = 1,
+		Default = 25,
+		Function = function()
+			if BackTrack.Enabled then
+				if KPS.Value <= 0 then KPS.Value = 1 end
+				game:GetService("NetworkClient"):SetOutgoingKBPSLimit(KPS.Value)
+				if BackTrackIncoming.Enabled then 
+					settings():GetService("NetworkSettings").IncomingReplicationLag = KPS.Value * 4
+				end
+			else
+				game:GetService("NetworkClient"):SetOutgoingKBPSLimit(math.huge)
+				if BackTrackIncoming.Enabled then 
+					settings():GetService("NetworkSettings").IncomingReplicationLag = 0
+				end
+			end
+		end
+	})
+end)
 -- Export
 _G.TSB = tsb
 _G.TSBStore = store
