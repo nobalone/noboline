@@ -21,7 +21,7 @@ local mainapi = {
 	Scale = {Value = 1},
 	ToggleNotifications = {Enabled = true},
 	ThreadFix = setthreadidentity and true or false,
-	Version = 'v6',
+	Version = 'v3.51.9',
 	Windows = {}
 }
 
@@ -2211,7 +2211,7 @@ function mainapi:CreateNotification(title, text, duration, type, continued)
 		})
 	end
 	if title == 'Finished Loading' then
-		title = 'Noboline'
+		title = 'Augustus rise'
 		text = 'Finished Loading'
 		duration = 5
 	end
@@ -2576,7 +2576,7 @@ local swatermark = Instance.new('TextLabel')
 swatermark.Size = UDim2.fromOffset(70, 40)
 swatermark.Position = UDim2.fromOffset(28, 22)
 swatermark.BackgroundTransparency = 1
-swatermark.Text = 'Noboline'
+swatermark.Text = 'Augustus'
 swatermark.TextColor3 = uipallet.Text
 swatermark.TextSize = 38
 swatermark.TextXAlignment = Enum.TextXAlignment.Left
@@ -2966,7 +2966,7 @@ local watermark = Instance.new('TextLabel')
 watermark.Size = UDim2.fromOffset(70, 40)
 watermark.Position = UDim2.fromOffset(12, guiService:GetGuiInset().Y + 5)
 watermark.BackgroundTransparency = 1
-watermark.Text = 'Noboline'
+watermark.Text = 'Augustus'
 watermark.TextColor3 = Color3.new(1, 1, 1)
 watermark.TextSize = 43
 watermark.TextXAlignment = Enum.TextXAlignment.Left
@@ -3044,7 +3044,7 @@ local targetinfoname = Instance.new('TextLabel')
 targetinfoname.Size = UDim2.fromOffset(60, 30)
 targetinfoname.Position = UDim2.fromOffset(158, 21)
 targetinfoname.BackgroundTransparency = 1
-targetinfoname.Text = 'Noboline'
+targetinfoname.Text = 'AmongUs'
 targetinfoname.TextSize = 26
 targetinfoname.TextXAlignment = Enum.TextXAlignment.Left
 targetinfoname.TextColor3 = uipallet.MainColor
