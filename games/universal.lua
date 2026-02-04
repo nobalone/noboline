@@ -1,4 +1,5 @@
 --This watermark is used to delete the file if its cached, remove it to make the file persist after vape updates.
+--This watermark is used to delete the file if its cached, remove it to make the file persist after vape updates.
 local loadstring = function(...)
 	local res, err = loadstring(...)
 	if err and vape then
@@ -3336,9 +3337,49 @@ run(function()
 	local SearchRange
 	local StrafeRange
 	local YFactor
+	local Direction
+	local Smoothness
+	local Tweening
+	local VisualPath
 	local rayCheck = RaycastParams.new()
 	rayCheck.RespectCanCollide = true
 	local module, old
+	local currentDirection = 1
+	local lastSwitchTime = 0
+	local visualParts = {}
+	local lastPosition = Vector3.zero
+	
+	local function createVisualPath(center, radius)
+		-- Clear old parts
+		for _, part in visualParts do
+			part:Destroy()
+		end
+		visualParts = {}
+		
+		if not VisualPath.Enabled then return end
+		
+		-- Create circle of parts
+		local segments = 32
+		for i = 1, segments do
+			local angle = (i / segments) * math.pi * 2
+			local x = center.X + (math.cos(angle) * radius)
+			local z = center.Z + (math.sin(angle) * radius)
+			local pos = Vector3.new(x, center.Y, z)
+			
+			local part = Instance.new('Part')
+			part.Size = Vector3.new(0.5, 0.2, 0.5)
+			part.Position = pos
+			part.Anchored = true
+			part.CanCollide = false
+			part.CanQuery = false
+			part.Material = Enum.Material.Neon
+			part.Color = Color3.fromRGB(0, 255, 255)
+			part.Transparency = 0.5
+			part.Parent = workspace
+			
+			table.insert(visualParts, part)
+		end
+	end
 	
 	TargetStrafe = vape.Categories.Blatant:CreateModule({
 		Name = 'TargetStrafe',
@@ -3353,6 +3394,10 @@ run(function()
 				
 				old = module.moveFunction
 				local flymod, ang, oldent = vape.Modules.Fly or {Enabled = false}
+				currentDirection = 1
+				lastSwitchTime = tick()
+				lastPosition = Vector3.zero
+				
 				module.moveFunction = function(self, vec, face)
 					local wallcheck = Targets.Walls.Enabled
 					local ent = not inputService:IsKeyDown(Enum.KeyCode.S) and entitylib.EntityPosition({
@@ -3370,13 +3415,41 @@ run(function()
 	
 						if flymod.Enabled or workspace:Raycast(targetPos, Vector3.new(0, -70, 0), rayCheck) then
 							local factor, localPosition = 0, root.Position
+							
+							-- Handle direction modes
+							if Direction.Value == 'Clockwise' then
+								currentDirection = 1
+							elseif Direction.Value == 'Counter-Clockwise' then
+								currentDirection = -1
+							elseif Direction.Value == 'Auto-Switch' then
+								-- Switch every 3 seconds
+								if tick() - lastSwitchTime > 3 then
+									currentDirection = currentDirection * -1
+									lastSwitchTime = tick()
+								end
+							elseif Direction.Value == 'Random' then
+								-- Random direction changes
+								if tick() - lastSwitchTime > math.random(2, 5) then
+									currentDirection = math.random() > 0.5 and 1 or -1
+									lastSwitchTime = tick()
+								end
+							end
+							
 							if ent ~= oldent then
 								ang = math.deg(select(2, CFrame.lookAt(targetPos, localPosition):ToEulerAnglesYXZ()))
 							end
+							
 							local yFactor = math.abs(localPosition.Y - targetPos.Y) * (YFactor.Value / 100)
 							local entityPos = Vector3.new(targetPos.X, localPosition.Y, targetPos.Z)
 							local newPos = entityPos + (CFrame.Angles(0, math.rad(ang), 0).LookVector * (StrafeRange.Value - yFactor))
 							local startRay, endRay = entityPos, newPos
+							
+							-- Create visual path
+							if VisualPath.Enabled then
+								task.spawn(function()
+									createVisualPath(entityPos, StrafeRange.Value - yFactor)
+								end)
+							end
 	
 							if not wallcheck and workspace:Raycast(targetPos, (localPosition - targetPos), rayCheck) then
 								startRay, endRay = entityPos + (CFrame.Angles(0, math.rad(ang), 0).LookVector * (entityPos - localPosition).Magnitude), entityPos
@@ -3396,12 +3469,35 @@ run(function()
 								factor = 40
 							end
 	
-							ang += factor % 360
+							ang += (factor * currentDirection) % 360
 							vec = ((newPos - localPosition) * Vector3.new(1, 0, 1)).Unit
 							vec = vec == vec and vec or Vector3.zero
+							
+							-- Apply smoothness (lerp)
+							if Smoothness.Value > 0 and lastPosition ~= Vector3.zero then
+								local smoothFactor = Smoothness.Value / 100
+								vec = lastPosition:Lerp(vec, 1 - smoothFactor)
+							end
+							lastPosition = vec
+							
+							-- Apply tweening for smooth movement
+							if Tweening.Enabled then
+								local currentPos = root.Position
+								local targetMovePos = currentPos + (vec * 0.5)
+								vec = (targetMovePos - currentPos).Unit
+							end
+							
 							TargetStrafeVector = vec
 						else
 							ent = nil
+						end
+					else
+						-- Clear visual path when no target
+						if VisualPath.Enabled then
+							for _, part in visualParts do
+								part:Destroy()
+							end
+							visualParts = {}
 						end
 					end
 	
@@ -3414,14 +3510,29 @@ run(function()
 					module.moveFunction = old
 				end
 				TargetStrafeVector = nil
+				lastPosition = Vector3.zero
+				
+				-- Cleanup visual parts
+				for _, part in visualParts do
+					part:Destroy()
+				end
+				visualParts = {}
 			end
 		end,
 		Tooltip = 'Automatically strafes around the opponent'
 	})
+	
 	Targets = TargetStrafe:CreateTargets({
 		Players = true,
 		Walls = true
 	})
+	
+	Direction = TargetStrafe:CreateDropdown({
+		Name = 'Direction',
+		List = {'Clockwise', 'Counter-Clockwise', 'Auto-Switch', 'Random'},
+		Default = 'Clockwise'
+	})
+	
 	SearchRange = TargetStrafe:CreateSlider({
 		Name = 'Search Range',
 		Min = 1,
@@ -3431,6 +3542,7 @@ run(function()
 			return val == 1 and 'stud' or 'studs'
 		end
 	})
+	
 	StrafeRange = TargetStrafe:CreateSlider({
 		Name = 'Strafe Range',
 		Min = 1,
@@ -3440,6 +3552,7 @@ run(function()
 			return val == 1 and 'stud' or 'studs'
 		end
 	})
+	
 	YFactor = TargetStrafe:CreateSlider({
 		Name = 'Y Factor',
 		Min = 0,
@@ -3447,8 +3560,414 @@ run(function()
 		Default = 100,
 		Suffix = '%'
 	})
-end)
 	
+	Smoothness = TargetStrafe:CreateSlider({
+		Name = 'Smoothness',
+		Min = 0,
+		Max = 90,
+		Default = 30,
+		Suffix = '%',
+		Tooltip = 'Higher = smoother but slower response'
+	})
+	
+	Tweening = TargetStrafe:CreateToggle({
+		Name = 'Tweening',
+		Tooltip = 'Smooth interpolated movement'
+	})
+	
+	VisualPath = TargetStrafe:CreateToggle({
+		Name = 'Visual Path',
+		Tooltip = 'Shows strafe circle around target'
+	})
+end)
+run(function()
+    local connections = {}
+    local MinecraftChat = {Enabled = false}
+    
+    -- Config
+    local Config = {
+        TypeWriter = false,
+        FadeMessages = true,
+        ShowJoins = true,
+        ShowLeaves = true,
+        BackgroundOpacity = 5,
+        MaxMessages = 100,
+        ChatScale = 10,
+        Font = Enum.Font.GothamBold
+    }
+    
+    -- UI Elements
+    local gui, chatFrame, messagesList, chatInput
+    local messages = {}
+    local chatVisible = false
+    local fadeTime = 0
+    
+    -- Font options
+    local fontOptions = {
+        {Name = "Code", Font = Enum.Font.Code},
+        {Name = "SourceSans", Font = Enum.Font.SourceSans},
+        {Name = "SourceSansBold", Font = Enum.Font.SourceSansBold},
+        {Name = "Gotham", Font = Enum.Font.Gotham},
+        {Name = "GothamBold", Font = Enum.Font.GothamBold},
+        {Name = "Arial", Font = Enum.Font.Arial},
+        {Name = "ArialBold", Font = Enum.Font.ArialBold},
+        {Name = "RobotoMono", Font = Enum.Font.RobotoMono},
+        {Name = "Ubuntu", Font = Enum.Font.Ubuntu},
+        {Name = "Arcade", Font = Enum.Font.Arcade},
+        {Name = "Fantasy", Font = Enum.Font.Fantasy},
+        {Name = "Cartoon", Font = Enum.Font.Cartoon},
+        {Name = "SciFi", Font = Enum.Font.SciFi},
+        {Name = "FredokaOne", Font = Enum.Font.FredokaOne},
+        {Name = "Highway", Font = Enum.Font.Highway},
+        {Name = "PatrickHand", Font = Enum.Font.PatrickHand},
+        {Name = "PermanentMarker", Font = Enum.Font.PermanentMarker}
+    }
+    
+    local currentFontIndex = 1
+    
+    -- Simple cleanup
+    local function cleanup()
+        for i, con in pairs(connections) do
+            pcall(function() con:Disconnect() end)
+        end
+        connections = {}
+        messages = {}
+        if gui then 
+            gui:Destroy() 
+            gui = nil 
+        end
+    end
+    
+    -- Add connection helper
+    local function addConnection(con)
+        table.insert(connections, con)
+    end
+    
+    -- Show/hide chat
+    local function updateVisibility()
+        if not chatFrame or not chatInput then return end
+        
+        local bg = chatVisible and (Config.BackgroundOpacity / 10) or 0
+        local txt = chatVisible and 0 or 1
+        
+        game:GetService("TweenService"):Create(chatFrame, TweenInfo.new(0.3), {
+            BackgroundTransparency = 1 - bg
+        }):Play()
+        
+        game:GetService("TweenService"):Create(chatInput, TweenInfo.new(0.3), {
+            BackgroundTransparency = 1 - bg,
+            TextTransparency = txt
+        }):Play()
+    end
+    
+    -- Update all message fonts
+    local function updateMessageFonts()
+        if not messagesList then return end
+        for _, msgFrame in pairs(messages) do
+            local label = msgFrame:FindFirstChildOfClass("TextLabel")
+            if label then
+                label.Font = Config.Font
+            end
+        end
+        if chatInput then
+            chatInput.Font = Config.Font
+        end
+    end
+    
+    -- Add message to chat
+    local function addMessage(text, sender, isSystem)
+        if not messagesList then return end
+        
+        -- Remove old messages
+        while #messages >= Config.MaxMessages do
+            local old = table.remove(messages, 1)
+            if old then old:Destroy() end
+        end
+        
+        -- Create message frame
+        local msgFrame = Instance.new("Frame")
+        msgFrame.Size = UDim2.new(1, -5, 0, 0)
+        msgFrame.BackgroundTransparency = 1
+        msgFrame.AutomaticSize = Enum.AutomaticSize.Y
+        msgFrame.Parent = messagesList
+        
+        -- Create text label
+        local label = Instance.new("TextLabel")
+        label.Size = UDim2.new(1, 0, 0, 0)
+        label.BackgroundTransparency = 1
+        label.TextColor3 = Color3.new(1, 1, 1)
+        label.TextSize = Config.ChatScale + 4
+        label.Font = Config.Font
+        label.TextXAlignment = Enum.TextXAlignment.Left
+        label.TextYAlignment = Enum.TextYAlignment.Top
+        label.RichText = true
+        label.TextWrapped = true
+        label.AutomaticSize = Enum.AutomaticSize.Y
+        label.TextStrokeTransparency = 0.5
+        label.Parent = msgFrame
+        
+        -- Format message
+        local finalText = ""
+        if isSystem then
+            finalText = string.format('<font color="rgb(170,170,170)">%s</font>', text)
+        else
+            local color = sender and sender.TeamColor.Color or Color3.new(1, 1, 1)
+            local hex = string.format("rgb(%d,%d,%d)", color.R * 255, color.G * 255, color.B * 255)
+            local name = sender and sender.Name or "Unknown"
+            finalText = string.format('&lt;%s&gt; <font color="%s">%s</font>', name, hex, text)
+        end
+        
+        label.Text = finalText
+        table.insert(messages, msgFrame)
+        
+        -- Auto scroll
+        task.wait()
+        messagesList.CanvasPosition = Vector2.new(0, messagesList.AbsoluteCanvasSize.Y)
+        
+        -- Reset fade
+        chatVisible = true
+        fadeTime = 0
+        updateVisibility()
+    end
+    
+    -- Create GUI
+    local function createGUI()
+        local player = game:GetService("Players").LocalPlayer
+        local pg = player:WaitForChild("PlayerGui")
+        
+        gui = Instance.new("ScreenGui")
+        gui.Name = "MinecraftChat"
+        gui.ResetOnSpawn = false
+        gui.Parent = pg
+        
+        -- Chat background
+        chatFrame = Instance.new("Frame")
+        chatFrame.Size = UDim2.new(0, 400, 0, 180)
+        chatFrame.Position = UDim2.new(0, 10, 1, -200)
+        chatFrame.BackgroundColor3 = Color3.new(0, 0, 0)
+        chatFrame.BackgroundTransparency = 1
+        chatFrame.BorderSizePixel = 0
+        chatFrame.Parent = gui
+        
+        -- Messages scrolling frame
+        messagesList = Instance.new("ScrollingFrame")
+        messagesList.Size = UDim2.new(1, 0, 1, -30)
+        messagesList.BackgroundTransparency = 1
+        messagesList.BorderSizePixel = 0
+        messagesList.ScrollBarThickness = 4
+        messagesList.CanvasSize = UDim2.new(0, 0, 0, 0)
+        messagesList.AutomaticCanvasSize = Enum.AutomaticSize.Y
+        messagesList.Parent = chatFrame
+        
+        local layout = Instance.new("UIListLayout")
+        layout.Padding = UDim.new(0, 2)
+        layout.Parent = messagesList
+        
+        -- Input box
+        chatInput = Instance.new("TextBox")
+        chatInput.Size = UDim2.new(1, 0, 0, 25)
+        chatInput.Position = UDim2.new(0, 0, 1, -25)
+        chatInput.BackgroundColor3 = Color3.new(0, 0, 0)
+        chatInput.BackgroundTransparency = 1
+        chatInput.TextColor3 = Color3.new(1, 1, 1)
+        chatInput.PlaceholderText = "Press T to chat..."
+        chatInput.PlaceholderColor3 = Color3.fromRGB(128, 128, 128)
+        chatInput.Text = ""
+        chatInput.TextSize = 14
+        chatInput.Font = Config.Font
+        chatInput.TextXAlignment = Enum.TextXAlignment.Left
+        chatInput.ClearTextOnFocus = false
+        chatInput.Parent = chatFrame
+    end
+    
+    -- Main module
+    MinecraftChat = vape.Categories.World:CreateModule({
+        Name = "Better Chat",
+        Function = function(callback)
+            if callback then
+                local Players = game:GetService("Players")
+                local TextChatService = game:GetService("TextChatService")
+                local UserInputService = game:GetService("UserInputService")
+                local RunService = game:GetService("RunService")
+                
+                -- Save original state
+                local origChat1 = TextChatService.ChatWindowConfiguration.Enabled
+                local origChat2 = TextChatService.ChatInputBarConfiguration.Enabled
+                local origChat3 = TextChatService.ChannelTabsConfiguration.Enabled
+                
+                -- Disable default chat
+                TextChatService.ChatWindowConfiguration.Enabled = false
+                TextChatService.ChatInputBarConfiguration.Enabled = false
+                TextChatService.ChannelTabsConfiguration.Enabled = false
+                
+                -- Create UI
+                createGUI()
+                
+                -- Get text channel
+                local textChannel = TextChatService:WaitForChild("TextChannels"):WaitForChild("RBXGeneral")
+                
+                -- Handle received messages
+                addConnection(TextChatService.MessageReceived:Connect(function(msg)
+                    local sender = msg.TextSource and Players:GetPlayerByUserId(msg.TextSource.UserId)
+                    addMessage(msg.Text, sender, not msg.TextSource)
+                end))
+                
+                -- Handle sending messages
+                addConnection(chatInput.FocusLost:Connect(function(enter)
+                    if enter and chatInput.Text ~= "" then
+                        pcall(function()
+                            textChannel:SendAsync(chatInput.Text)
+                        end)
+                        chatInput.Text = ""
+                    end
+                    chatVisible = false
+                    updateVisibility()
+                end))
+                
+                addConnection(chatInput.Focused:Connect(function()
+                    chatVisible = true
+                    updateVisibility()
+                end))
+                
+                -- T key to open chat
+                addConnection(UserInputService.InputBegan:Connect(function(input, gpe)
+                    if input.KeyCode == Enum.KeyCode.T then
+                        if not chatInput:IsFocused() then
+                            local focusedObject = UserInputService:GetFocusedTextBox()
+                            if not focusedObject then
+                                task.wait()
+                                chatInput:CaptureFocus()
+                                chatInput.Text = ""
+                            end
+                        end
+                    end
+                end))
+                
+                -- Slash key
+                addConnection(UserInputService.InputBegan:Connect(function(input, gpe)
+                    if input.KeyCode == Enum.KeyCode.Slash then
+                        if not chatInput:IsFocused() then
+                            local focusedObject = UserInputService:GetFocusedTextBox()
+                            if not focusedObject then
+                                chatInput:CaptureFocus()
+                                task.wait(0.05)
+                                chatInput.Text = "/"
+                            end
+                        end
+                    end
+                end))
+                
+                -- Join/leave messages
+                addConnection(Players.PlayerAdded:Connect(function(plr)
+                    if Config.ShowJoins then
+                        task.wait(0.5)
+                        addMessage(string.format('<font color="rgb(255,255,85)">%s joined the game</font>', plr.Name), nil, true)
+                    end
+                end))
+                
+                addConnection(Players.PlayerRemoving:Connect(function(plr)
+                    if Config.ShowLeaves then
+                        addMessage(string.format('<font color="rgb(255,255,85)">%s left the game</font>', plr.Name), nil, true)
+                    end
+                end))
+                
+                -- Fade timer
+                addConnection(RunService.Heartbeat:Connect(function(dt)
+                    if chatVisible and not chatInput:IsFocused() then
+                        fadeTime = fadeTime + dt
+                        if fadeTime > 3 and Config.FadeMessages then
+                            chatVisible = false
+                            updateVisibility()
+                        end
+                    end
+                end))
+                
+                -- Restore chat on disable
+                table.insert(connections, function()
+                    TextChatService.ChatWindowConfiguration.Enabled = origChat1
+                    TextChatService.ChatInputBarConfiguration.Enabled = origChat2
+                    TextChatService.ChannelTabsConfiguration.Enabled = origChat3
+                end)
+                
+                addMessage("Augustus v3.5.4", nil, true)
+            else
+                cleanup()
+            end
+        end
+    })
+    
+    -- Settings
+    MinecraftChat:CreateToggle({
+        Name = "Typewriter",
+        Function = function(val) Config.TypeWriter = val end,
+        Default = false
+    })
+    
+    MinecraftChat:CreateToggle({
+        Name = "Fade Messages",
+        Function = function(val) Config.FadeMessages = val end,
+        Default = true
+    })
+    
+    MinecraftChat:CreateToggle({
+        Name = "Show Joins",
+        Function = function(val) Config.ShowJoins = val end,
+        Default = true
+    })
+    
+    MinecraftChat:CreateToggle({
+        Name = "Show Leaves",
+        Function = function(val) Config.ShowLeaves = val end,
+        Default = true
+    })
+    
+    MinecraftChat:CreateSlider({
+        Name = "Background Opacity",
+        Min = 0,
+        Max = 10,
+        Default = 5,
+        Function = function(val)
+            Config.BackgroundOpacity = val
+            if MinecraftChat.Enabled then updateVisibility() end
+        end
+    })
+    
+    MinecraftChat:CreateSlider({
+        Name = "Chat Scale",
+        Min = 8,
+        Max = 20,
+        Default = 10,
+        Function = function(val) Config.ChatScale = val end
+    })
+    
+    MinecraftChat:CreateSlider({
+        Name = "Max Messages",
+        Min = 20,
+        Max = 200,
+        Round = 0,
+        Default = 100,
+        Function = function(val) Config.MaxMessages = val end
+    })
+    
+    -- Font Selector (Button to cycle through fonts)
+    MinecraftChat:CreateButton({
+        Name = "Change Font: " .. fontOptions[1].Name,
+        Function = function()
+            currentFontIndex = currentFontIndex + 1
+            if currentFontIndex > #fontOptions then
+                currentFontIndex = 1
+            end
+            
+            Config.Font = fontOptions[currentFontIndex].Font
+            updateMessageFonts()
+            
+            -- Try to update button name if possible
+            pcall(function()
+                MinecraftChat.Options["Change Font: " .. fontOptions[currentFontIndex - 1].Name].Name = "Change Font: " .. fontOptions[currentFontIndex].Name
+            end)
+        end
+    })
+end)
 run(function()
 	local Timer
 	local Value
