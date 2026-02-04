@@ -2,6 +2,7 @@
 --This watermark is used to delete the file if its cached, remove it to make the file persist after vape updates.
 --This watermark is used to delete the file if its cached, remove it to make the file persist after vape updates.
 --This watermark is used to delete the file if its cached, remove it to make the file persist after vape updates.
+--This watermark is used to delete the file if its cached, remove it to make the file persist after vape updates.
 local run = function(func)
 	func()
 end
@@ -1804,14 +1805,19 @@ end)
 local Fly
 local LongJump
 run(function()
+	local Mode
 	local Value
 	local VerticalValue
 	local WallCheck
 	local PopBalloons
 	local TP
+	local Bob
 	local rayCheck = RaycastParams.new()
 	rayCheck.RespectCanCollide = true
 	local up, down, old = 0, 0
+	local pulseTimer = 0
+	local rageMultiplier = 1
+	local bobTimer = 0
 
 	Fly = vape.Categories.Blatant:CreateModule({
 		Name = 'Fly',
@@ -1822,6 +1828,9 @@ run(function()
 				up, down, old = 0, 0, bedwars.BalloonController.deflateBalloon
 				bedwars.BalloonController.deflateBalloon = function() end
 				local tpTick, tpToggle, oldy = tick(), true
+				pulseTimer = 0
+				rageMultiplier = 1
+				bobTimer = 0
 
 				if lplr.Character and (lplr.Character:GetAttribute('InflatedBalloons') or 0) == 0 and getItem('balloon') then
 					bedwars.BalloonController:inflateBalloon()
@@ -1834,18 +1843,90 @@ run(function()
 				Fly:Clean(runService.PreSimulation:Connect(function(dt)
 					if entitylib.isAlive and not InfiniteFly.Enabled and isnetworkowner(entitylib.character.RootPart) then
 						local flyAllowed = (lplr.Character:GetAttribute('InflatedBalloons') and lplr.Character:GetAttribute('InflatedBalloons') > 0) or store.matchState == 2
-						local mass = (1.5 + (flyAllowed and 6 or 0) * (tick() % 0.4 < 0.2 and -1 or 1)) + ((up + down) * VerticalValue.Value)
 						local root, moveDirection = entitylib.character.RootPart, entitylib.character.Humanoid.MoveDirection
 						local velo = getSpeed()
-						local destination = (moveDirection * math.max(Value.Value - velo, 0) * dt)
+						
+						-- Mode-specific speed calculations
+						local targetSpeed = Value.Value
+						local destination = Vector3.zero
+						local verticalMass = (1.5 + (flyAllowed and 6 or 0) * (tick() % 0.4 < 0.2 and -1 or 1)) + ((up + down) * VerticalValue.Value)
+						
+						-- Bob mode - add oscillating vertical movement
+						if Bob.Enabled then
+							bobTimer += dt
+							local bobAmount = math.sin(bobTimer * 3) * 2 -- Oscillates ±2 studs
+							verticalMass = verticalMass + bobAmount
+						end
+						
 						rayCheck.FilterDescendantsInstances = {lplr.Character, gameCamera, AntiFallPart}
 						rayCheck.CollisionGroup = root.CollisionGroup
 
-						if WallCheck.Enabled then
-							local ray = workspace:Raycast(root.Position, destination, rayCheck)
-							if ray then
-								destination = ((ray.Position + ray.Normal) - root.Position)
+						if Mode.Value == 'CFrame' then
+							-- Original CFrame mode
+							destination = (moveDirection * math.max(targetSpeed - velo, 0) * dt)
+							
+							if WallCheck.Enabled then
+								local ray = workspace:Raycast(root.Position, destination, rayCheck)
+								if ray then
+									destination = ((ray.Position + ray.Normal) - root.Position)
+								end
 							end
+							
+							root.CFrame += destination
+							root.AssemblyLinearVelocity = (moveDirection * velo) + Vector3.new(0, verticalMass, 0)
+							
+						elseif Mode.Value == 'Pulse' then
+							-- Pulsing speed (20-43 studs)
+							pulseTimer += dt
+							local pulseSpeed = 31.5 + (math.sin(pulseTimer * 6) * 11.5) -- Oscillates 20-43
+							destination = (moveDirection * math.max(pulseSpeed - velo, 0) * dt)
+							
+							if WallCheck.Enabled then
+								local ray = workspace:Raycast(root.Position, destination, rayCheck)
+								if ray then
+									destination = ((ray.Position + ray.Normal) - root.Position)
+								end
+							end
+							
+							root.CFrame += destination
+							root.AssemblyLinearVelocity = (moveDirection * pulseSpeed) + Vector3.new(0, verticalMass, 0)
+							
+						elseif Mode.Value == 'Velocity' then
+							-- Pure velocity-based movement
+							local currentVelocity = root.AssemblyLinearVelocity
+							local horizontalVel = currentVelocity * Vector3.new(1, 0, 1)
+							
+							if horizontalVel.Magnitude < targetSpeed then
+								local boostVel = moveDirection * targetSpeed
+								root.AssemblyLinearVelocity = boostVel + Vector3.new(0, verticalMass, 0)
+							else
+								root.AssemblyLinearVelocity = Vector3.new(currentVelocity.X, verticalMass, currentVelocity.Z)
+							end
+							
+						elseif Mode.Value == 'Legit' then
+							-- Smoother, more legit flight
+							local legitSpeed = math.min(targetSpeed, 19)
+							destination = (moveDirection * math.max(legitSpeed - velo, 0) * dt * 0.8)
+							
+							if WallCheck.Enabled then
+								local ray = workspace:Raycast(root.Position, destination, rayCheck)
+								if ray then
+									destination = ((ray.Position + ray.Normal) - root.Position)
+								end
+							end
+							
+							root.CFrame += destination
+							root.AssemblyLinearVelocity = (moveDirection * velo) + Vector3.new(0, verticalMass, 0)
+							
+						elseif Mode.Value == 'RAGE' then
+							-- Maximum blatant (capped at 23 studs)
+							rageMultiplier = math.min(rageMultiplier + (dt * 1.5), 1.5)
+							local rageSpeed = math.min(targetSpeed * rageMultiplier, 23)
+							destination = (moveDirection * math.max(rageSpeed - velo, 0) * dt)
+							
+							-- No wall check in RAGE mode
+							root.CFrame += destination
+							root.AssemblyLinearVelocity = (moveDirection * rageSpeed) + Vector3.new(0, verticalMass, 0)
 						end
 
 						if not flyAllowed then
@@ -1870,14 +1951,11 @@ run(function()
 										tpToggle = true
 										oldy = nil
 									else
-										mass = 0
+										verticalMass = 0
 									end
 								end
 							end
 						end
-
-						root.CFrame += destination
-						root.AssemblyLinearVelocity = (moveDirection * velo) + Vector3.new(0, mass, 0)
 					end
 				end))
 				Fly:Clean(inputService.InputBegan:Connect(function(input)
@@ -1911,13 +1989,30 @@ run(function()
 						bedwars.BalloonController:deflateBalloon()
 					end
 				end
+				pulseTimer = 0
+				rageMultiplier = 1
+				bobTimer = 0
 			end
 		end,
 		ExtraText = function()
-			return 'Heatseeker'
+			return Mode.Value
 		end,
 		Tooltip = 'Makes you go zoom.'
 	})
+	
+	Mode = Fly:CreateDropdown({
+		Name = 'Mode',
+		List = {'CFrame', 'Pulse', 'Velocity', 'Legit', 'RAGE'},
+		Default = 'CFrame',
+		Function = function(val)
+			if val == 'RAGE' then
+				rageMultiplier = 1
+			elseif val == 'Pulse' then
+				pulseTimer = 0
+			end
+		end
+	})
+	
 	Value = Fly:CreateSlider({
 		Name = 'Speed',
 		Min = 1,
@@ -1947,6 +2042,10 @@ run(function()
 	TP = Fly:CreateToggle({
 		Name = 'TP Down',
 		Default = true
+	})
+	Bob = Fly:CreateToggle({
+		Name = 'Bob',
+		Tooltip = 'Bobs up and down for antikick'
 	})
 end)
 	
@@ -2070,6 +2169,7 @@ run(function()
 	local ParticleColor2
 	local ParticleSize
 	local Face
+	local FaceMode
 	local Animation
 	local AnimationMode
 	local AnimationSpeed
@@ -2216,7 +2316,7 @@ run(function()
 									if targetDistance > AttackRange.Value then
 										-- Pre-swing pose
 										AnimTween = tweenService:Create(gameCamera.Viewmodel.RightHand.RightWrist, TweenInfo.new(0.1, Enum.EasingStyle.Linear), {
-											C0 = armC0 * CFrame.new(-0.17, -0.14, -0.12) * CFrame.Angles(math.rad(-53), math.rad(50), math.rad(-64))
+											C0 = armC0 * CFrame.new(0.69, -0.77, 1.47) * CFrame.Angles(math.rad(-33), math.rad(57), math.rad(-81))
 										})
 										AnimTween:Play()
 									else
@@ -2280,8 +2380,32 @@ run(function()
 					end
 
 					if Face.Enabled and attacked[1] then
-						local vec = attacked[1].Entity.RootPart.Position * Vector3.new(1, 0, 1)
-						entitylib.character.RootPart.CFrame = CFrame.lookAt(entitylib.character.RootPart.Position, Vector3.new(vec.X, entitylib.character.RootPart.Position.Y + 0.001, vec.Z))
+						local targetPos = attacked[1].Entity.RootPart.Position
+						local selfPos = entitylib.character.RootPart.Position
+						local vec = targetPos * Vector3.new(1, 0, 1)
+						local lookPos = Vector3.new(vec.X, selfPos.Y + 0.001, vec.Z)
+						
+						if FaceMode.Value == 'Instant' then
+							-- Instant snap rotation
+							entitylib.character.RootPart.CFrame = CFrame.lookAt(selfPos, lookPos)
+							
+						elseif FaceMode.Value == 'Smooth' then
+							-- Smooth interpolated rotation
+							local currentCF = entitylib.character.RootPart.CFrame
+							local targetCF = CFrame.lookAt(selfPos, lookPos)
+							entitylib.character.RootPart.CFrame = currentCF:Lerp(targetCF, 0.3)
+							
+						elseif FaceMode.Value == 'Legit' then
+							-- Human-like rotation with slight randomness
+							local currentCF = entitylib.character.RootPart.CFrame
+							local targetCF = CFrame.lookAt(selfPos, lookPos)
+							local lerpAmount = 0.15 + (math.random() * 0.1)
+							entitylib.character.RootPart.CFrame = currentCF:Lerp(targetCF, lerpAmount)
+							
+						elseif FaceMode.Value == 'Silent' then
+							-- Silent aim - no visual rotation
+							-- Attack packets already handle proper validation
+						end
 					end
 
 					task.wait(1 / UpdateRate.Value)
@@ -2324,8 +2448,8 @@ run(function()
 		end
 	end
 	SwingRange = Killaura:CreateSlider({
-		Name = 'Swing range',
-		Min = 6,
+		Name = 'Block range',
+		Min = 18,
 		Max = 35,
 		Default = 25,
 		Suffix = function(val)
@@ -2334,7 +2458,7 @@ run(function()
 	})
 	AttackRange = Killaura:CreateSlider({
 		Name = 'Attack range',
-		Min = 5,
+		Min = 15,
 		Max = 19,
 		Default = 19,
 		Suffix = function(val)
@@ -2504,7 +2628,18 @@ run(function()
 		Darker = true,
 		Visible = false
 	})
-	Face = Killaura:CreateToggle({Name = 'Face target'})
+	Face = Killaura:CreateToggle({
+		Name = 'Face target',
+		Function = function(callback)
+			FaceMode.Object.Visible = callback
+		end
+	})
+	FaceMode = Killaura:CreateDropdown({
+		Name = 'Rotation Mode',
+		List = {'Instant', 'Smooth', 'Legit', 'Silent'},
+		Darker = true,
+		Visible = false
+	})
 	Animation = Killaura:CreateToggle({
 		Name = 'Custom Animation',
 		Function = function(callback)
@@ -2556,6 +2691,120 @@ run(function()
 		Name = 'Swing only',
 		Tooltip = 'Only attacks while swinging manually'
 	})]]
+end)
+run(function()
+    local Players = game:GetService("Players")
+    local RunService = game:GetService("RunService")
+    local LocalPlayer = Players.LocalPlayer
+    local loopConn
+    local invisibilityEnabled = false
+
+    local function modifyHRP(onEnable)
+        local character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+        local hrp = character:WaitForChild("HumanoidRootPart")
+
+        if onEnable then
+            hrp.Transparency = 0.3
+            hrp.Color = Color3.new(1, 1, 1)
+            hrp.Material = Enum.Material.Plastic
+        else
+            hrp.Transparency = 1
+        end
+
+        hrp.CanCollide = true
+        hrp.Anchored = false
+    end
+
+    local function setCharacterVisibility(isVisible)
+        local character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+        for _, part in ipairs(character:GetDescendants()) do
+            if part:IsA("BasePart") and part.Name ~= "HumanoidRootPart" then
+                part.LocalTransparencyModifier = isVisible and 0 or 1
+            elseif part:IsA("Decal") then
+                part.Transparency = isVisible and 0 or 1
+            elseif part:IsA("LayerCollector") then
+                part.Enabled = isVisible
+            end
+        end
+    end
+
+    local function startLoop(Character)
+        local Humanoid = Character:FindFirstChild("Humanoid")
+        if not Humanoid or Humanoid.RigType == Enum.HumanoidRigType.R6 then return end
+
+        local RootPart = Character:FindFirstChild("HumanoidRootPart")
+        if not RootPart then return end
+
+        if loopConn then loopConn:Disconnect() end
+
+        loopConn = RunService.Heartbeat:Connect(function()
+            if not invisibilityEnabled or not Character or not Humanoid or not RootPart then return end
+
+            -- Force character invisible every frame
+            for _, part in ipairs(Character:GetDescendants()) do
+                if part:IsA("BasePart") and part.Name ~= "HumanoidRootPart" then
+                    part.LocalTransparencyModifier = 1
+                elseif part:IsA("Decal") then
+                    part.Transparency = 1
+                elseif part:IsA("LayerCollector") then
+                    part.Enabled = false
+                end
+            end
+
+            -- Position/animation spoof
+            local oldcf = RootPart.CFrame
+            local oldcamoffset = Humanoid.CameraOffset
+            local newcf = RootPart.CFrame - Vector3.new(0, Humanoid.HipHeight + (RootPart.Size.Y / 2) - 1, 0)
+
+            RootPart.CFrame = newcf * CFrame.Angles(0, 0, math.rad(180))
+            Humanoid.CameraOffset = Vector3.new(0, -5, 0)
+
+            local anim = Instance.new("Animation")
+            anim.AnimationId = "http://www.roblox.com/asset/?id=11360825341"
+            local loaded = Humanoid.Animator:LoadAnimation(anim)
+            loaded.Priority = Enum.AnimationPriority.Action4
+            loaded:Play()
+            loaded.TimePosition = 0.2
+            loaded:AdjustSpeed(0)
+
+            RunService.RenderStepped:Wait()
+            loaded:Stop()
+
+            Humanoid.CameraOffset = oldcamoffset
+            RootPart.CFrame = oldcf
+        end)
+    end
+
+    Invisibility = vape.Categories.Blatant:CreateModule({
+        Name = 'Invisibility',
+        Function = function(callback)
+            invisibilityEnabled = callback
+            local character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+
+            if callback then
+                vape:CreateNotification('Invisibility Enabled', 'You are now invisible.', 4)
+                modifyHRP(true)
+                setCharacterVisibility(false)
+                startLoop(character)
+            else
+                if loopConn then
+                    loopConn:Disconnect()
+                    loopConn = nil
+                end
+                modifyHRP(false)
+                setCharacterVisibility(true)
+            end
+        end,
+        Default = false,
+        Tooltip = ""
+    })
+
+    LocalPlayer.CharacterAdded:Connect(function()
+        if invisibilityEnabled then
+            task.wait(0.5)
+            Invisibility.Function(true)
+        end
+    end)
 end)
 run(function()
 	local BackTrackIncoming = {}
@@ -4686,12 +4935,16 @@ end)
 	
 run(function()
 	local Speed
+	local Mode
 	local Value
 	local WallCheck
 	local AutoJump
+	local JumpHeight
 	local AlwaysJump
 	local rayCheck = RaycastParams.new()
 	rayCheck.RespectCanCollide = true
+	local pulseTimer = 0
+	local rageMultiplier = 1
 	
 	Speed = vape.Categories.Blatant:CreateModule({
 		Name = 'Speed',
@@ -4701,67 +4954,177 @@ run(function()
 			pcall(function()
 				debug.setconstant(bedwars.WindWalkerController.updateSpeed, 7, callback and 'constantSpeedMultiplier' or 'moveSpeedMultiplier')
 			end)
-	
+
 			if callback then
+				pulseTimer = 0
+				rageMultiplier = 1
+				
 				Speed:Clean(runService.PreSimulation:Connect(function(dt)
 					bedwars.StatefulEntityKnockbackController.lastImpulseTime = callback and math.huge or time()
 					if entitylib.isAlive and not Fly.Enabled and not InfiniteFly.Enabled and not LongJump.Enabled and isnetworkowner(entitylib.character.RootPart) then
 						local state = entitylib.character.Humanoid:GetState()
 						if state == Enum.HumanoidStateType.Climbing then return end
-	
-						local root, velo = entitylib.character.RootPart, getSpeed()
+
+						local root = entitylib.character.RootPart
+						local velo = getSpeed()
 						local moveDirection = AntiFallDirection or entitylib.character.Humanoid.MoveDirection
-						local destination = (moveDirection * math.max(Value.Value - velo, 0) * dt)
-	
-						if WallCheck.Enabled then
-							rayCheck.FilterDescendantsInstances = {lplr.Character, gameCamera}
-							rayCheck.CollisionGroup = root.CollisionGroup
-							local ray = workspace:Raycast(root.Position, destination, rayCheck)
-							if ray then
-								destination = ((ray.Position + ray.Normal) - root.Position)
+						
+						-- Mode-specific speed calculations
+						local targetSpeed = Value.Value
+						local destination = Vector3.zero
+						
+						if Mode.Value == 'CFrame' then
+							-- Original CFrame mode
+							destination = (moveDirection * math.max(targetSpeed - velo, 0) * dt)
+							
+							if WallCheck.Enabled then
+								rayCheck.FilterDescendantsInstances = {lplr.Character, gameCamera}
+								rayCheck.CollisionGroup = root.CollisionGroup
+								local ray = workspace:Raycast(root.Position, destination, rayCheck)
+								if ray then
+									destination = ((ray.Position + ray.Normal) - root.Position)
+								end
 							end
+							
+							root.CFrame += destination
+							root.AssemblyLinearVelocity = (moveDirection * velo) + Vector3.new(0, root.AssemblyLinearVelocity.Y, 0)
+							
+						elseif Mode.Value == 'Pulse' then
+							-- Pulsing speed (fast -> slow -> fast)
+							pulseTimer += dt
+							local pulseSpeed = targetSpeed * (0.7 + (math.sin(pulseTimer * 8) * 0.3))
+							destination = (moveDirection * math.max(pulseSpeed - velo, 0) * dt)
+							
+							if WallCheck.Enabled then
+								rayCheck.FilterDescendantsInstances = {lplr.Character, gameCamera}
+								rayCheck.CollisionGroup = root.CollisionGroup
+								local ray = workspace:Raycast(root.Position, destination, rayCheck)
+								if ray then
+									destination = ((ray.Position + ray.Normal) - root.Position)
+								end
+							end
+							
+							root.CFrame += destination
+							root.AssemblyLinearVelocity = (moveDirection * pulseSpeed) + Vector3.new(0, root.AssemblyLinearVelocity.Y, 0)
+							
+						elseif Mode.Value == 'Velocity' then
+							-- Pure velocity-based movement
+							local currentVelocity = root.AssemblyLinearVelocity
+							local horizontalVel = currentVelocity * Vector3.new(1, 0, 1)
+							
+							if horizontalVel.Magnitude < targetSpeed then
+								local boostVel = moveDirection * targetSpeed
+								root.AssemblyLinearVelocity = boostVel + Vector3.new(0, currentVelocity.Y, 0)
+							end
+							
+						elseif Mode.Value == 'Legit' then
+							-- Smoother, more legit speed
+							local legitSpeed = math.min(targetSpeed, 19) -- Cap at semi-legit speed
+							destination = (moveDirection * math.max(legitSpeed - velo, 0) * dt * 0.8)
+							
+							if WallCheck.Enabled then
+								rayCheck.FilterDescendantsInstances = {lplr.Character, gameCamera}
+								rayCheck.CollisionGroup = root.CollisionGroup
+								local ray = workspace:Raycast(root.Position, destination, rayCheck)
+								if ray then
+									destination = ((ray.Position + ray.Normal) - root.Position)
+								end
+							end
+							
+							-- Gradual speed increase
+							local currentSpeed = (root.CFrame.Position - (root.CFrame - destination).Position).Magnitude / dt
+							local smoothSpeed = math.min(currentSpeed + (dt * 5), legitSpeed)
+							
+							root.CFrame += (moveDirection * smoothSpeed * dt * 0.8)
+							root.AssemblyLinearVelocity = (moveDirection * velo) + Vector3.new(0, root.AssemblyLinearVelocity.Y, 0)
+							
+						elseif Mode.Value == 'RAGE' then
+							-- Maximum blatant speed with acceleration
+							rageMultiplier = math.min(rageMultiplier + (dt * 2), 2)
+							local rageSpeed = targetSpeed * rageMultiplier
+							destination = (moveDirection * math.max(rageSpeed - velo, 0) * dt)
+							
+							-- No wall check in RAGE mode - phase through
+							root.CFrame += destination
+							root.AssemblyLinearVelocity = (moveDirection * rageSpeed) + Vector3.new(0, root.AssemblyLinearVelocity.Y, 0)
 						end
-	
-						root.CFrame += destination
-						root.AssemblyLinearVelocity = (moveDirection * velo) + Vector3.new(0, root.AssemblyLinearVelocity.Y, 0)
+						
+						-- AutoJump with custom height
 						if AutoJump.Enabled and (state == Enum.HumanoidStateType.Running or state == Enum.HumanoidStateType.Landed) and moveDirection ~= Vector3.zero and (Attacking or AlwaysJump.Enabled) then
 							entitylib.character.Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+							
+							-- Apply custom jump height
+							task.wait()
+							if entitylib.isAlive then
+								local currentVel = root.AssemblyLinearVelocity
+								root.AssemblyLinearVelocity = Vector3.new(currentVel.X, JumpHeight.Value, currentVel.Z)
+							end
 						end
 					end
 				end))
+			else
+				pulseTimer = 0
+				rageMultiplier = 1
 			end
 		end,
 		ExtraText = function()
-			return 'Heatseeker'
+			return Mode.Value
 		end,
 		Tooltip = 'Increases your movement with various methods.'
 	})
+	
+	Mode = Speed:CreateDropdown({
+		Name = 'Mode',
+		List = {'CFrame', 'Pulse', 'Velocity', 'Legit', 'RAGE'},
+		Default = 'CFrame',
+		Function = function(val)
+			if val == 'RAGE' then
+				rageMultiplier = 1
+			elseif val == 'Pulse' then
+				pulseTimer = 0
+			end
+		end
+	})
+	
 	Value = Speed:CreateSlider({
 		Name = 'Speed',
 		Min = 1,
-		Max = 23,
-		Default = 23,
+		Max = 22,
+		Default = 22,
 		Suffix = function(val)
 			return val == 1 and 'stud' or 'studs'
 		end
 	})
+	
 	WallCheck = Speed:CreateToggle({
 		Name = 'Wall Check',
 		Default = true
 	})
+	
 	AutoJump = Speed:CreateToggle({
 		Name = 'AutoJump',
 		Function = function(callback)
 			AlwaysJump.Object.Visible = callback
+			JumpHeight.Object.Visible = callback
 		end
 	})
+	
+	JumpHeight = Speed:CreateSlider({
+		Name = 'Jump Height',
+		Min = 1,
+		Max = 25,
+		Default = 20,
+		Darker = true,
+		Visible = false
+	})
+	
 	AlwaysJump = Speed:CreateToggle({
 		Name = 'Always Jump',
 		Visible = false,
 		Darker = true
 	})
 end)
-	
+
 run(function()
 	local BedESP
 	local Reference = {}
