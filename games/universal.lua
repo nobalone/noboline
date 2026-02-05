@@ -1,6 +1,7 @@
 --This watermark is used to delete the file if its cached, remove it to make the file persist after vape updates.
 --This watermark is used to delete the file if its cached, remove it to make the file persist after vape updates.
 --This watermark is used to delete the file if its cached, remove it to make the file persist after vape updates.
+--This watermark is used to delete the file if its cached, remove it to make the file persist after vape updates.
 local loadstring = function(...)
 	local res, err = loadstring(...)
 	if err and vape then
@@ -7775,13 +7776,13 @@ run(function()
 			            SunAngularSize = 0,
 			            StarCount = 0,
 		        },
-		        FPSBoost = {
-			            SkyboxBk = 'rbxassetid://11457548274',
-			            SkyboxDn = 'rbxassetid://11457548274',
-			            SkyboxFt = 'rbxassetid://11457548274',
-			            SkyboxLf = 'rbxassetid://11457548274',
-			            SkyboxRt = 'rbxassetid://11457548274',
-			            SkyboxUp = 'rbxassetid://11457548274',
+		        Anime = {
+			            SkyboxBk = 'rbxassetid://14358449723',
+			            SkyboxDn = 'rbxassetid://14358455642',
+			            SkyboxFt = 'rbxassetid://14358452362',
+			            SkyboxLf = 'rbxassetid://14358784700',
+			            SkyboxRt = 'rbxassetid://14358454172',
+			            SkyboxUp = 'rbxassetid://14358455112',
 			            SunAngularSize = 0,
 			            StarCount = 3000,
 		        },
@@ -7995,7 +7996,7 @@ run(function()
 		end;
 	end;
 
-	Atmosphere = vape.Legit:CreateModule({
+	Atmosphere = vape.Categories.World:CreateModule({
 		["Name"] = 'Atmosphere',
 		["Function"] = function(callback: boolean): void
 			if callback then
@@ -8099,7 +8100,7 @@ run(function()
 				restoreDefault(ILS);
 			end;
 		end,
-		["Tooltip"] = 'Custom lighting objects'
+		["Tooltip"] = 'cope'
 	})
 	local skyboxes: table = {};
 	for v,_ in next, skyThemes do
