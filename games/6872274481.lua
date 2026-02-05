@@ -3,6 +3,7 @@
 --This watermark is used to delete the file if its cached, remove it to make the file persist after vape updates.
 --This watermark is used to delete the file if its cached, remove it to make the file persist after vape updates.
 --This watermark is used to delete the file if its cached, remove it to make the file persist after vape updates.
+--This watermark is used to delete the file if its cached, remove it to make the file persist after vape updates.
 local run = function(func)
 	func()
 end
@@ -10294,19 +10295,377 @@ run(function()
 	})
 end)
 	
+run(function() 
+    local ViewmodelMods
+    local ViewmodelHighlight
+    local ViewmodelThird
+    local ViewmodelTransparency
+    local ViewmodelColor
+    local ViewmodelAttributes
+    local ViewmodelNoBob
+    local nobobdepth
+    local nobobhorizontal
+    local nobobvertical
+    local rotationx
+    local rotationy
+    local rotationz
+    local scythestoswords
+
+    local viewmodelstuff = {}
+    local oldviewmodelanim
+    local oldviewmodelC1
+    
+    local function replace(item1, item2)
+        if not item1 or not item2 then return end
+        
+        local itemsFolder = replicatedStorage:FindFirstChild('Items')
+        if not itemsFolder then return end
+        
+        local i1 = itemsFolder:FindFirstChild(item1)
+        local i2 = itemsFolder:FindFirstChild(item2)
+        
+        if not i1 or not i2 then return end
+        
+        -- Clone the item and replace
+        i1.Archivable = true
+        local clone = i1:Clone()
+        clone.Name = i2.Name
+        clone.Parent = i2.Parent
+        i2:Destroy()
+    end
+
+    local updatefuncs = {
+        Normal = function(part, original) 
+            local highlight = original or Instance.new('Highlight')
+            highlight.FillColor = Color3.fromHSV(ViewmodelColor.Hue, ViewmodelColor.Sat, ViewmodelColor.Value)
+            highlight.FillTransparency = (ViewmodelTransparency.Value / 85)
+            highlight.OutlineTransparency = 1
+            highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+            highlight.Parent = part
+            table.insert(viewmodelstuff, highlight)
+            part.TextureID = ''
+        end,
+        Classic = function(part)
+            part.TextureID = ''
+            part.Color = Color3.fromHSV(ViewmodelColor.Hue, ViewmodelColor.Sat, ViewmodelColor.Value)
+        end
+    }
+
+    local function viewmodelFunction(handle)
+        local success, viewmodelHandle = pcall(function()
+            if handle and handle:IsA('Part') then
+                return handle
+            end
+            local viewmodel = gameCamera:FindFirstChild('Viewmodel')
+            if viewmodel then
+                return viewmodel:FindFirstChildWhichIsA('Accessory') and viewmodel:FindFirstChildWhichIsA('Accessory').Handle
+            end
+            return nil
+        end)
+        
+        if success and viewmodelHandle then 
+            updatefuncs[ViewmodelHighlight.Value](viewmodelHandle, viewmodelHandle:FindFirstChildWhichIsA('Highlight'))
+        end
+        
+        -- Third person view
+        if ViewmodelThird.Enabled and ViewmodelHighlight.Value == 'Classic' then
+            local success2, thirdPersonHandle = pcall(function()
+                for _, v in next, lplr.Character:GetChildren() do 
+                    if v:IsA('Accessory') and v.Name == viewmodelHandle.Parent.Name and v:GetAttribute('InvItem') then 
+                        return v.Handle
+                    end
+                end
+                return nil
+            end)
+            
+            if success2 and thirdPersonHandle then 
+                updatefuncs[ViewmodelHighlight.Value](thirdPersonHandle, thirdPersonHandle:FindFirstChildWhichIsA('Highlight'))
+            end
+        end
+    end
+
+    ViewmodelMods = vape.Categories.Render:CreateModule({
+        Name = 'vSword to Scythe',
+        Function = function(callback)
+            if callback then 
+                local viewmodel = gameCamera:WaitForChild('Viewmodel')
+                
+                -- Initial application
+                viewmodelFunction()
+                
+                -- Update when new items are added to viewmodel
+                ViewmodelMods:Clean(viewmodel.ChildAdded:Connect(function(child)
+                    task.wait(0.1) -- Wait for handle to load
+                    viewmodelFunction()
+                end))
+                
+                -- Hook viewmodel animations to disable bobbing
+                oldviewmodelanim = bedwars.ViewmodelController.playAnimation 
+                bedwars.ViewmodelController.playAnimation = function(self, animid, details)
+                    if animid == bedwars.AnimationType.FP_WALK and ViewmodelAttributes.Enabled and ViewmodelNoBob.Enabled then 
+                        return -- Skip walk animation when no bobbing is enabled
+                    end 
+                    return oldviewmodelanim(self, animid, details)
+                end
+                
+                -- Apply viewmodel offsets if attributes enabled
+                if ViewmodelAttributes.Enabled then 
+                    local controller = lplr.PlayerScripts.TS.controllers.global.viewmodel:FindFirstChild('viewmodel-controller')
+                    if controller then
+                        controller:SetAttribute('ConstantManager_DEPTH_OFFSET', -(nobobdepth.Value / 10))
+                        controller:SetAttribute('ConstantManager_HORIZONTAL_OFFSET', (nobobhorizontal.Value / 10))
+                        controller:SetAttribute('ConstantManager_VERTICAL_OFFSET', (nobobvertical.Value / 10))
+                    end
+                    
+                    -- Store original wrist C1
+                    pcall(function() 
+                        oldviewmodelC1 = viewmodel.RightHand.RightWrist.C1 
+                    end)
+                end
+                
+                -- Cleanup function
+                ViewmodelMods:Clean(function()
+                    if oldviewmodelanim then 
+                        bedwars.ViewmodelController.playAnimation = oldviewmodelanim 
+                        oldviewmodelanim = nil
+                    end
+                    
+                    if oldviewmodelC1 then 
+                        pcall(function() 
+                            gameCamera.Viewmodel.RightHand.RightWrist.C1 = oldviewmodelC1 
+                        end)
+                        oldviewmodelC1 = nil
+                    end
+                    
+                    -- Reset attributes
+                    local controller = lplr.PlayerScripts.TS.controllers.global.viewmodel:FindFirstChild('viewmodel-controller')
+                    if controller then
+                        controller:SetAttribute('ConstantManager_DEPTH_OFFSET', 0)
+                        controller:SetAttribute('ConstantManager_HORIZONTAL_OFFSET', 0)
+                        controller:SetAttribute('ConstantManager_VERTICAL_OFFSET', 0)
+                    end
+                    
+                    -- Cleanup highlights
+                    for _, v in next, viewmodelstuff do 
+                        pcall(function() v:Destroy() end) 
+                    end
+                    table.clear(viewmodelstuff)
+                end)
+            else
+                -- Cleanup on disable
+                if oldviewmodelanim then 
+                    bedwars.ViewmodelController.playAnimation = oldviewmodelanim 
+                    oldviewmodelanim = nil
+                end
+                
+                if oldviewmodelC1 then 
+                    pcall(function() 
+                        gameCamera.Viewmodel.RightHand.RightWrist.C1 = oldviewmodelC1 
+                    end)
+                    oldviewmodelC1 = nil
+                end
+                
+                -- Reset attributes
+                local controller = lplr.PlayerScripts.TS.controllers.global.viewmodel:FindFirstChild('viewmodel-controller')
+                if controller then
+                    controller:SetAttribute('ConstantManager_DEPTH_OFFSET', 0)
+                    controller:SetAttribute('ConstantManager_HORIZONTAL_OFFSET', 0)
+                    controller:SetAttribute('ConstantManager_VERTICAL_OFFSET', 0)
+                end
+                
+                -- Cleanup highlights
+                for _, v in next, viewmodelstuff do 
+                    pcall(function() v:Destroy() end) 
+                end
+                table.clear(viewmodelstuff)
+            end
+        end,
+        Tooltip = 'Customize the first person viewmodel experience'
+    })
+
+    ViewmodelThird = ViewmodelMods:CreateToggle({
+        Name = 'Third Person',
+        Default = true,
+        Tooltip = 'Also changes the tool in third person',
+        Function = function(callback)
+            if ViewmodelMods.Enabled then
+                viewmodelFunction() 
+            end
+        end
+    })
+
+    ViewmodelAttributes = ViewmodelMods:CreateToggle({
+        Name = 'Attributes',
+        Tooltip = 'Size & Rotations for viewmodel',
+        Function = function(callback)
+            ViewmodelNoBob.Object.Visible = callback
+            nobobdepth.Object.Visible = callback
+            nobobhorizontal.Object.Visible = callback
+            nobobvertical.Object.Visible = callback
+            rotationx.Object.Visible = callback
+            rotationy.Object.Visible = callback
+            rotationz.Object.Visible = callback
+            
+            if ViewmodelMods.Enabled then 
+                ViewmodelMods:Toggle()
+                ViewmodelMods:Toggle()
+            end
+        end
+    })
+
+    ViewmodelNoBob = ViewmodelMods:CreateToggle({
+        Name = 'No Bobbing',
+        Tooltip = 'No ugly bobbing animation',
+        Function = function(callback)
+            if ViewmodelMods.Enabled and ViewmodelAttributes.Enabled then 
+                ViewmodelMods:Toggle()
+                ViewmodelMods:Toggle()
+            end
+        end
+    })
+
+    nobobdepth = ViewmodelMods:CreateSlider({
+        Name = 'Depth Offset',
+        Min = 0,
+        Max = 24,
+        Default = 8,
+        Function = function(val)
+            if ViewmodelMods.Enabled and ViewmodelAttributes.Enabled then
+                local controller = lplr.PlayerScripts.TS.controllers.global.viewmodel:FindFirstChild('viewmodel-controller')
+                if controller then
+                    controller:SetAttribute('ConstantManager_DEPTH_OFFSET', -(val / 10))
+                end
+            end
+        end
+    })
+
+    nobobhorizontal = ViewmodelMods:CreateSlider({
+        Name = 'Horizontal Offset',
+        Min = 0,
+        Max = 24,
+        Default = 8,
+        Function = function(val)
+            if ViewmodelMods.Enabled and ViewmodelAttributes.Enabled then
+                local controller = lplr.PlayerScripts.TS.controllers.global.viewmodel:FindFirstChild('viewmodel-controller')
+                if controller then
+                    controller:SetAttribute('ConstantManager_HORIZONTAL_OFFSET', (val / 10))
+                end
+            end
+        end
+    })
+
+    nobobvertical = ViewmodelMods:CreateSlider({
+        Name = 'Vertical Offset',
+        Min = 0,
+        Max = 24,
+        Default = -2,
+        Function = function(val)
+            if ViewmodelMods.Enabled and ViewmodelAttributes.Enabled then
+                local controller = lplr.PlayerScripts.TS.controllers.global.viewmodel:FindFirstChild('viewmodel-controller')
+                if controller then
+                    controller:SetAttribute('ConstantManager_VERTICAL_OFFSET', (val / 10))
+                end
+            end
+        end
+    })
+
+    rotationx = ViewmodelMods:CreateSlider({
+        Name = 'Rotation X',
+        Min = 0,
+        Max = 360,
+        Default = 0,
+        Function = function(val)
+            if ViewmodelMods.Enabled and ViewmodelAttributes.Enabled and oldviewmodelC1 then
+                gameCamera.Viewmodel.RightHand.RightWrist.C1 = oldviewmodelC1 * CFrame.Angles(
+                    math.rad(rotationx.Value), 
+                    math.rad(rotationy.Value), 
+                    math.rad(rotationz.Value)
+                )
+            end
+        end
+    })
+
+    rotationy = ViewmodelMods:CreateSlider({
+        Name = 'Rotation Y',
+        Min = 0,
+        Max = 360,
+        Default = 0,
+        Function = function(val)
+            if ViewmodelMods.Enabled and ViewmodelAttributes.Enabled and oldviewmodelC1 then
+                gameCamera.Viewmodel.RightHand.RightWrist.C1 = oldviewmodelC1 * CFrame.Angles(
+                    math.rad(rotationx.Value), 
+                    math.rad(rotationy.Value), 
+                    math.rad(rotationz.Value)
+                )
+            end
+        end
+    })
+
+    rotationz = ViewmodelMods:CreateSlider({
+        Name = 'Rotation Z',
+        Min = 0,
+        Max = 360,
+        Default = 0,
+        Function = function(val)
+            if ViewmodelMods.Enabled and ViewmodelAttributes.Enabled and oldviewmodelC1 then
+                gameCamera.Viewmodel.RightHand.RightWrist.C1 = oldviewmodelC1 * CFrame.Angles(
+                    math.rad(rotationx.Value), 
+                    math.rad(rotationy.Value), 
+                    math.rad(val)
+                )
+            end
+        end
+    })
+
+    scythestoswords = ViewmodelMods:CreateToggle({
+        Name = 'Sword to Scythe',
+        Function = function(callback)
+            if callback then
+                replace("wood_scythe", "wood_sword")
+                replace("stone_scythe", "stone_sword")
+                replace("iron_scythe", "iron_sword")
+                replace("diamond_scythe", "diamond_sword")
+                replace("mythic_scythe", "emerald_sword")
+                notif('ViewModelMods', 'Replaced scythe models with swords', 3)
+            end
+        end
+    })
+    
+    -- Hide dependent objects initially
+    ViewmodelNoBob.Object.Visible = false
+    nobobdepth.Object.Visible = false
+    nobobhorizontal.Object.Visible = false
+    nobobvertical.Object.Visible = false
+    rotationx.Object.Visible = false
+    rotationy.Object.Visible = false
+    rotationz.Object.Visible = false
+end)
 run(function()
 	local Viewmodel
 	local Depth
 	local Horizontal
 	local Vertical
+	local Scaling
 	local NoBob
 	local Rots = {}
 	local old, oldc1
+
+	local function scaleVM(viewmodel)
+		if not viewmodel then return end
+		
+		local accessory = viewmodel:FindFirstChildOfClass('Accessory')
 	
-	Viewmodel = vape.Legit:CreateModule({
+		if accessory then
+			local thing = accessory:FindFirstChild('Handle')
+			thing.Size = replicatedStorage.Items:FindFirstChild(accessory.Name):FindFirstChildWhichIsA('BasePart').Size * Scaling.Value
+		end
+	end
+	
+	Viewmodel = vape.Categories.Render:CreateModule({
 		Name = 'Viewmodel',
 		Function = function(callback)
 			local viewmodel = gameCamera:FindFirstChild('Viewmodel')
+			scaleVM(viewmodel)
 			if callback then
 				old = bedwars.ViewmodelController.playAnimation
 				oldc1 = viewmodel and viewmodel.RightHand.RightWrist.C1 or CFrame.identity
@@ -10395,6 +10754,16 @@ run(function()
 				Viewmodel:Toggle()
 				Viewmodel:Toggle()
 			end
+		end
+	})
+	Scaling = Viewmodel:CreateSlider({
+		Name = 'Scale',
+		Min = .1,
+		Max = 1.5,
+		Default = 1,
+		Decimal = 10,
+		Function = function(val)
+			scaleVM(gameCamera:FindFirstChild('Viewmodel'))
 		end
 	})
 end)
