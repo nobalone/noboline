@@ -1,5 +1,6 @@
 --This watermark is used to delete the file if its cached, remove it to make the file persist after vape updates.
 --This watermark is used to delete the file if its cached, remove it to make the file persist after vape updates.
+--This watermark is used to delete the file if its cached, remove it to make the file persist after vape updates.
 local loadstring = function(...)
 	local res, err = loadstring(...)
 	if err and vape then
@@ -244,12 +245,118 @@ vape.Libraries.prediction = prediction
 vape.Libraries.hash = hash
 vape.Libraries.auraanims = {
 	Normal = {
-		{CFrame = CFrame.new(-0.17, -0.14, -0.12) * CFrame.Angles(math.rad(-53), math.rad(50), math.rad(-64)), Time = 0.1},
-		{CFrame = CFrame.new(-0.55, -0.59, -0.1) * CFrame.Angles(math.rad(-161), math.rad(54), math.rad(-6)), Time = 0.08},
-		{CFrame = CFrame.new(-0.62, -0.68, -0.07) * CFrame.Angles(math.rad(-167), math.rad(47), math.rad(-1)), Time = 0.03},
-		{CFrame = CFrame.new(-0.56, -0.86, 0.23) * CFrame.Angles(math.rad(-167), math.rad(49), math.rad(-1)), Time = 0.03}
+	{CFrame = CFrame.new(-0.17, -0.14, -0.12) * CFrame.Angles(math.rad(-53), math.rad(50), math.rad(-64)), Time = 0.1},
+	{CFrame = CFrame.new(-0.55, -0.35, -0.1) * CFrame.Angles(math.rad(-161), math.rad(54), math.rad(-6)), Time = 0.08},
+	{CFrame = CFrame.new(-0.62, -0.42, -0.07) * CFrame.Angles(math.rad(-167), math.rad(47), math.rad(-1)), Time = 0.03},
+	{CFrame = CFrame.new(-0.56, -0.48, 0.23) * CFrame.Angles(math.rad(-167), math.rad(49), math.rad(-1)), Time = 0.03}
+	},
+	Exhi2 = {
+	{CFrame = CFrame.new(-0.2, -0.8, 0.1) * CFrame.Angles(math.rad(-170), math.rad(45), math.rad(-5)), Time = 0.05},
+	{CFrame = CFrame.new(-0.25, -0.6, 0) * CFrame.Angles(math.rad(-155), math.rad(50), math.rad(-15)), Time = 0.04},
+	{CFrame = CFrame.new(-0.3, -0.4, -0.05) * CFrame.Angles(math.rad(-140), math.rad(55), math.rad(-25)), Time = 0.04},
+	{CFrame = CFrame.new(-0.35, -0.2, -0.1) * CFrame.Angles(math.rad(-110), math.rad(60), math.rad(-35)), Time = 0.04},
+	{CFrame = CFrame.new(-0.4, 0, -0.15) * CFrame.Angles(math.rad(-80), math.rad(65), math.rad(-45)), Time = 0.04},
+	{CFrame = CFrame.new(-0.45, 0.2, -0.18) * CFrame.Angles(math.rad(-50), math.rad(70), math.rad(-55)), Time = 0.04},
+	{CFrame = CFrame.new(-0.5, 0.4, -0.2) * CFrame.Angles(math.rad(-20), math.rad(75), math.rad(-65)), Time = 0.04},
+	{CFrame = CFrame.new(-0.52, 0.5, -0.22) * CFrame.Angles(math.rad(0), math.rad(80), math.rad(-70)), Time = 0.03},
+	{CFrame = CFrame.new(-0.5, 0.45, -0.2) * CFrame.Angles(math.rad(-10), math.rad(77), math.rad(-68)), Time = 0.03},
+	{CFrame = CFrame.new(-0.45, 0.35, -0.18) * CFrame.Angles(math.rad(-25), math.rad(73), math.rad(-63)), Time = 0.03},
+	{CFrame = CFrame.new(-0.35, 0.15, -0.15) * CFrame.Angles(math.rad(-45), math.rad(68), math.rad(-55)), Time = 0.04},
+	{CFrame = CFrame.new(-0.25, -0.1, -0.1) * CFrame.Angles(math.rad(-70), math.rad(60), math.rad(-45)), Time = 0.05},
+	{CFrame = CFrame.new(-0.2, -0.4, -0.05) * CFrame.Angles(math.rad(-100), math.rad(55), math.rad(-35)), Time = 0.05},
+	{CFrame = CFrame.new(-0.18, -0.65, 0.05) * CFrame.Angles(math.rad(-135), math.rad(50), math.rad(-20)), Time = 0.06},
+	{CFrame = CFrame.new(-0.17, -0.8, 0.1) * CFrame.Angles(math.rad(-160), math.rad(47), math.rad(-10)), Time = 0.06}
+	},
+	novoline = {
+	-- Start position (idle/ready)
+	{CFrame = CFrame.new(-0.3, -0.9, 0.2) * CFrame.Angles(math.rad(-175), math.rad(40), math.rad(-8)), Time = 0.12},
+	
+	-- Begin upward swing (smooth transitions with closer keyframes)
+	{CFrame = CFrame.new(-0.32, -0.78, 0.15) * CFrame.Angles(math.rad(-165), math.rad(44), math.rad(-14)), Time = 0.06},
+	{CFrame = CFrame.new(-0.35, -0.65, 0.1) * CFrame.Angles(math.rad(-150), math.rad(48), math.rad(-20)), Time = 0.06},
+	{CFrame = CFrame.new(-0.38, -0.5, 0.05) * CFrame.Angles(math.rad(-135), math.rad(53), math.rad(-28)), Time = 0.05},
+	{CFrame = CFrame.new(-0.42, -0.35, 0) * CFrame.Angles(math.rad(-120), math.rad(58), math.rad(-35)), Time = 0.05},
+	
+	-- Mid swing rise
+	{CFrame = CFrame.new(-0.45, -0.2, -0.05) * CFrame.Angles(math.rad(-102), math.rad(63), math.rad(-43)), Time = 0.05},
+	{CFrame = CFrame.new(-0.48, -0.05, -0.1) * CFrame.Angles(math.rad(-85), math.rad(68), math.rad(-50)), Time = 0.04},
+	{CFrame = CFrame.new(-0.5, 0.1, -0.14) * CFrame.Angles(math.rad(-65), math.rad(73), math.rad(-58)), Time = 0.04},
+	{CFrame = CFrame.new(-0.52, 0.25, -0.18) * CFrame.Angles(math.rad(-45), math.rad(78), math.rad(-65)), Time = 0.04},
+	
+	-- Peak of swing (exhibition showcase)
+	{CFrame = CFrame.new(-0.54, 0.38, -0.22) * CFrame.Angles(math.rad(-28), math.rad(82), math.rad(-70)), Time = 0.04},
+	{CFrame = CFrame.new(-0.55, 0.5, -0.25) * CFrame.Angles(math.rad(-10), math.rad(85), math.rad(-75)), Time = 0.03},
+	{CFrame = CFrame.new(-0.56, 0.6, -0.27) * CFrame.Angles(math.rad(5), math.rad(87), math.rad(-78)), Time = 0.03},
+	{CFrame = CFrame.new(-0.56, 0.68, -0.29) * CFrame.Angles(math.rad(18), math.rad(89), math.rad(-81)), Time = 0.03},
+	
+	-- Hold at top (exhibition pause - multiple small steps)
+	{CFrame = CFrame.new(-0.55, 0.7, -0.3) * CFrame.Angles(math.rad(25), math.rad(90), math.rad(-82)), Time = 0.04},
+	{CFrame = CFrame.new(-0.55, 0.7, -0.3) * CFrame.Angles(math.rad(25), math.rad(90), math.rad(-82)), Time = 0.05},
+	
+	-- Begin descent
+	{CFrame = CFrame.new(-0.54, 0.65, -0.28) * CFrame.Angles(math.rad(15), math.rad(88), math.rad(-80)), Time = 0.04},
+	{CFrame = CFrame.new(-0.52, 0.6, -0.27) * CFrame.Angles(math.rad(10), math.rad(86), math.rad(-78)), Time = 0.04},
+	{CFrame = CFrame.new(-0.5, 0.5, -0.25) * CFrame.Angles(math.rad(-5), math.rad(83), math.rad(-74)), Time = 0.05},
+	{CFrame = CFrame.new(-0.48, 0.4, -0.22) * CFrame.Angles(math.rad(-15), math.rad(80), math.rad(-70)), Time = 0.05},
+	
+	-- Downward arc
+	{CFrame = CFrame.new(-0.46, 0.28, -0.19) * CFrame.Angles(math.rad(-30), math.rad(76), math.rad(-65)), Time = 0.05},
+	{CFrame = CFrame.new(-0.43, 0.15, -0.15) * CFrame.Angles(math.rad(-45), math.rad(72), math.rad(-60)), Time = 0.05},
+	{CFrame = CFrame.new(-0.41, 0, -0.12) * CFrame.Angles(math.rad(-62), math.rad(68), math.rad(-54)), Time = 0.06},
+	{CFrame = CFrame.new(-0.38, -0.15, -0.08) * CFrame.Angles(math.rad(-80), math.rad(65), math.rad(-48)), Time = 0.06},
+	{CFrame = CFrame.new(-0.36, -0.3, -0.04) * CFrame.Angles(math.rad(-97), math.rad(61), math.rad(-42)), Time = 0.06},
+	{CFrame = CFrame.new(-0.34, -0.45, 0) * CFrame.Angles(math.rad(-115), math.rad(58), math.rad(-35)), Time = 0.06},
+	
+	-- Return to start
+	{CFrame = CFrame.new(-0.33, -0.58, 0.05) * CFrame.Angles(math.rad(-132), math.rad(54), math.rad(-28)), Time = 0.07},
+	{CFrame = CFrame.new(-0.32, -0.7, 0.1) * CFrame.Angles(math.rad(-150), math.rad(50), math.rad(-20)), Time = 0.07},
+	{CFrame = CFrame.new(-0.31, -0.8, 0.15) * CFrame.Angles(math.rad(-163), math.rad(46), math.rad(-14)), Time = 0.08},
+	{CFrame = CFrame.new(-0.3, -0.88, 0.18) * CFrame.Angles(math.rad(-172), math.rad(42), math.rad(-10)), Time = 0.08},
+	
+	-- Final rest position
+	{CFrame = CFrame.new(-0.3, -0.9, 0.2) * CFrame.Angles(math.rad(-175), math.rad(40), math.rad(-8)), Time = 0.1}
 	},
 	Random = {},
+	BlockHit = {
+	-- Idle/ready position
+	{CFrame = CFrame.new(-0.15, -0.75, 0.15) * CFrame.Angles(math.rad(-165), math.rad(35), math.rad(-5)), Time = 0.08},
+	
+	-- Quick pull back (block preparation)
+	{CFrame = CFrame.new(-0.22, -0.65, 0.25) * CFrame.Angles(math.rad(-155), math.rad(42), math.rad(-12)), Time = 0.03},
+	{CFrame = CFrame.new(-0.28, -0.5, 0.32) * CFrame.Angles(math.rad(-140), math.rad(50), math.rad(-22)), Time = 0.02},
+	
+	-- Block position (sword pulled toward body)
+	{CFrame = CFrame.new(-0.35, -0.3, 0.4) * CFrame.Angles(math.rad(-120), math.rad(58), math.rad(-35)), Time = 0.02},
+	{CFrame = CFrame.new(-0.38, -0.2, 0.45) * CFrame.Angles(math.rad(-110), math.rad(62), math.rad(-42)), Time = 0.02},
+	
+	-- Hold block (brief pause)
+	{CFrame = CFrame.new(-0.4, -0.15, 0.48) * CFrame.Angles(math.rad(-105), math.rad(65), math.rad(-45)), Time = 0.03},
+	
+	-- Explosive swing start (1.7 style fast swing)
+	{CFrame = CFrame.new(-0.42, -0.05, 0.4) * CFrame.Angles(math.rad(-95), math.rad(68), math.rad(-50)), Time = 0.02},
+	{CFrame = CFrame.new(-0.45, 0.1, 0.28) * CFrame.Angles(math.rad(-78), math.rad(72), math.rad(-58)), Time = 0.02},
+	{CFrame = CFrame.new(-0.48, 0.25, 0.12) * CFrame.Angles(math.rad(-55), math.rad(76), math.rad(-68)), Time = 0.02},
+	
+	-- Peak of swing (extended position)
+	{CFrame = CFrame.new(-0.52, 0.42, -0.05) * CFrame.Angles(math.rad(-30), math.rad(82), math.rad(-78)), Time = 0.02},
+	{CFrame = CFrame.new(-0.55, 0.55, -0.18) * CFrame.Angles(math.rad(-8), math.rad(86), math.rad(-85)), Time = 0.02},
+	{CFrame = CFrame.new(-0.56, 0.62, -0.25) * CFrame.Angles(math.rad(8), math.rad(88), math.rad(-88)), Time = 0.02},
+	
+	-- Quick recovery snap (1.8.9 style)
+	{CFrame = CFrame.new(-0.54, 0.5, -0.2) * CFrame.Angles(math.rad(-5), math.rad(84), math.rad(-82)), Time = 0.02},
+	{CFrame = CFrame.new(-0.5, 0.32, -0.1) * CFrame.Angles(math.rad(-25), math.rad(78), math.rad(-72)), Time = 0.02},
+	{CFrame = CFrame.new(-0.45, 0.12, 0.05) * CFrame.Angles(math.rad(-48), math.rad(70), math.rad(-60)), Time = 0.02},
+	
+	-- Return swing
+	{CFrame = CFrame.new(-0.4, -0.08, 0.18) * CFrame.Angles(math.rad(-72), math.rad(62), math.rad(-48)), Time = 0.03},
+	{CFrame = CFrame.new(-0.35, -0.28, 0.28) * CFrame.Angles(math.rad(-98), math.rad(55), math.rad(-35)), Time = 0.03},
+	{CFrame = CFrame.new(-0.28, -0.48, 0.32) * CFrame.Angles(math.rad(-125), math.rad(48), math.rad(-25)), Time = 0.03},
+	
+	-- Reset to ready
+	{CFrame = CFrame.new(-0.22, -0.62, 0.25) * CFrame.Angles(math.rad(-145), math.rad(42), math.rad(-15)), Time = 0.04},
+	{CFrame = CFrame.new(-0.18, -0.72, 0.18) * CFrame.Angles(math.rad(-158), math.rad(38), math.rad(-8)), Time = 0.04},
+	{CFrame = CFrame.new(-0.15, -0.75, 0.15) * CFrame.Angles(math.rad(-165), math.rad(35), math.rad(-5)), Time = 0.05}
+	},
 	['Horizontal Spin'] = {
 		{CFrame = CFrame.Angles(math.rad(-10), math.rad(-90), math.rad(-80)), Time = 0.12},
 		{CFrame = CFrame.Angles(math.rad(-10), math.rad(180), math.rad(-80)), Time = 0.12},
@@ -262,11 +369,11 @@ vape.Libraries.auraanims = {
 		{CFrame = CFrame.Angles(math.rad(90), 0, math.rad(15)), Time = 0.12},
 		{CFrame = CFrame.Angles(0, 0, math.rad(15)), Time = 0.12}
 	},
-	Exhibition = {
+	Exhi = {
 		{CFrame = CFrame.new(0.69, -0.7, 0.6) * CFrame.Angles(math.rad(-30), math.rad(50), math.rad(-90)), Time = 0.1},
 		{CFrame = CFrame.new(0.7, -0.71, 0.59) * CFrame.Angles(math.rad(-84), math.rad(50), math.rad(-38)), Time = 0.2}
 	},
-	['Exhibition Old'] = {
+	['Exhi3'] = {
 		{CFrame = CFrame.new(0.69, -0.7, 0.6) * CFrame.Angles(math.rad(-30), math.rad(50), math.rad(-90)), Time = 0.15},
 		{CFrame = CFrame.new(0.69, -0.7, 0.6) * CFrame.Angles(math.rad(-30), math.rad(50), math.rad(-90)), Time = 0.05},
 		{CFrame = CFrame.new(0.7, -0.71, 0.59) * CFrame.Angles(math.rad(-84), math.rad(50), math.rad(-38)), Time = 0.1},
@@ -8158,7 +8265,6 @@ end)
 	
 run(function()
 	local Cape
-	local Texture
 	local part, motor
 	
 	local function createMotor(char)
@@ -8175,7 +8281,7 @@ run(function()
 		motor.Parent = part
 	end
 	
-	Cape = vape.Legit:CreateModule({
+	Cape = vape.Categories.Render:CreateModule({
 		Name = 'Cape',
 		Function = function(callback)
 			if callback then
@@ -8194,21 +8300,12 @@ run(function()
 				capesurface.Adornee = part
 				capesurface.Parent = part
 	
-				if Texture.Value:find('.webm') then
-					local decal = Instance.new('VideoFrame')
-					decal.Video = getcustomasset(Texture.Value)
-					decal.Size = UDim2.fromScale(1, 1)
-					decal.BackgroundTransparency = 1
-					decal.Looped = true
-					decal.Parent = capesurface
-					decal:Play()
-				else
-					local decal = Instance.new('ImageLabel')
-					decal.Image = Texture.Value ~= '' and (Texture.Value:find('rbxasset') and Texture.Value or assetfunction(Texture.Value)) or 'rbxassetid://14637958134'
-					decal.Size = UDim2.fromScale(1, 1)
-					decal.BackgroundTransparency = 1
-					decal.Parent = capesurface
-				end
+				local decal = Instance.new('ImageLabel')
+				decal.Image = assetfunction('noboline/assets/new/novoline.png')
+				decal.Size = UDim2.fromScale(1, 1)
+				decal.BackgroundTransparency = 1
+				decal.Parent = capesurface
+				
 				Cape:Clean(part)
 				Cape:Clean(entitylib.Events.LocalAdded:Connect(createMotor))
 				if entitylib.isAlive then
@@ -8230,9 +8327,6 @@ run(function()
 			end
 		end,
 		Tooltip = 'Add\'s a cape to your character'
-	})
-	Texture = Cape:CreateTextBox({
-		Name = 'Texture'
 	})
 end)
 	
