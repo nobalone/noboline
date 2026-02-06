@@ -4935,195 +4935,140 @@ run(function()
 end)
 	
 run(function()
-	local Speed
-	local Mode
-	local Value
-	local WallCheck
-	local AutoJump
-	local JumpHeight
-	local AlwaysJump
-	local rayCheck = RaycastParams.new()
-	rayCheck.RespectCanCollide = true
-	local pulseTimer = 0
-	local rageMultiplier = 1
-	
-	Speed = vape.Categories.Blatant:CreateModule({
-		Name = 'Speed',
-		Function = function(callback)
-			frictionTable.Speed = callback or nil
-			updateVelocity()
-			pcall(function()
-				debug.setconstant(bedwars.WindWalkerController.updateSpeed, 7, callback and 'constantSpeedMultiplier' or 'moveSpeedMultiplier')
-			end)
+    local Speed
+    local SpeedValue
+    local WallCheck
+    local AutoJump
+    local JumpHeight
+    local AlwaysJump
+    local JumpSound
+    local VanillaJump
+    local SlowdownAnim
 
-			if callback then
-				pulseTimer = 0
-				rageMultiplier = 1
-				
-				Speed:Clean(runService.PreSimulation:Connect(function(dt)
-					bedwars.StatefulEntityKnockbackController.lastImpulseTime = callback and math.huge or time()
-					if entitylib.isAlive and not Fly.Enabled and not InfiniteFly.Enabled and not LongJump.Enabled and isnetworkowner(entitylib.character.RootPart) then
-						local state = entitylib.character.Humanoid:GetState()
-						if state == Enum.HumanoidStateType.Climbing then return end
+    local rayCheck = RaycastParams.new()
+    rayCheck.RespectCanCollide = true
 
-						local root = entitylib.character.RootPart
-						local velo = getSpeed()
-						local moveDirection = AntiFallDirection or entitylib.character.Humanoid.MoveDirection
-						
-						-- Mode-specific speed calculations
-						local targetSpeed = Value.Value
-						local destination = Vector3.zero
-						
-						if Mode.Value == 'CFrame' then
-							-- Original CFrame mode
-							destination = (moveDirection * math.max(targetSpeed - velo, 0) * dt)
-							
-							if WallCheck.Enabled then
-								rayCheck.FilterDescendantsInstances = {lplr.Character, gameCamera}
-								rayCheck.CollisionGroup = root.CollisionGroup
-								local ray = workspace:Raycast(root.Position, destination, rayCheck)
-								if ray then
-									destination = ((ray.Position + ray.Normal) - root.Position)
-								end
-							end
-							
-							root.CFrame += destination
-							root.AssemblyLinearVelocity = (moveDirection * velo) + Vector3.new(0, root.AssemblyLinearVelocity.Y, 0)
-							
-						elseif Mode.Value == 'Pulse' then
-							-- Pulsing speed (fast -> slow -> fast)
-							pulseTimer += dt
-							local pulseSpeed = targetSpeed * (0.7 + (math.sin(pulseTimer * 8) * 0.3))
-							destination = (moveDirection * math.max(pulseSpeed - velo, 0) * dt)
-							
-							if WallCheck.Enabled then
-								rayCheck.FilterDescendantsInstances = {lplr.Character, gameCamera}
-								rayCheck.CollisionGroup = root.CollisionGroup
-								local ray = workspace:Raycast(root.Position, destination, rayCheck)
-								if ray then
-									destination = ((ray.Position + ray.Normal) - root.Position)
-								end
-							end
-							
-							root.CFrame += destination
-							root.AssemblyLinearVelocity = (moveDirection * pulseSpeed) + Vector3.new(0, root.AssemblyLinearVelocity.Y, 0)
-							
-						elseif Mode.Value == 'Velocity' then
-							-- Pure velocity-based movement
-							local currentVelocity = root.AssemblyLinearVelocity
-							local horizontalVel = currentVelocity * Vector3.new(1, 0, 1)
-							
-							if horizontalVel.Magnitude < targetSpeed then
-								local boostVel = moveDirection * targetSpeed
-								root.AssemblyLinearVelocity = boostVel + Vector3.new(0, currentVelocity.Y, 0)
-							end
-							
-						elseif Mode.Value == 'Legit' then
-							-- Smoother, more legit speed
-							local legitSpeed = math.min(targetSpeed, 19) -- Cap at semi-legit speed
-							destination = (moveDirection * math.max(legitSpeed - velo, 0) * dt * 0.8)
-							
-							if WallCheck.Enabled then
-								rayCheck.FilterDescendantsInstances = {lplr.Character, gameCamera}
-								rayCheck.CollisionGroup = root.CollisionGroup
-								local ray = workspace:Raycast(root.Position, destination, rayCheck)
-								if ray then
-									destination = ((ray.Position + ray.Normal) - root.Position)
-								end
-							end
-							
-							-- Gradual speed increase
-							local currentSpeed = (root.CFrame.Position - (root.CFrame - destination).Position).Magnitude / dt
-							local smoothSpeed = math.min(currentSpeed + (dt * 5), legitSpeed)
-							
-							root.CFrame += (moveDirection * smoothSpeed * dt * 0.8)
-							root.AssemblyLinearVelocity = (moveDirection * velo) + Vector3.new(0, root.AssemblyLinearVelocity.Y, 0)
-							
-						elseif Mode.Value == 'RAGE' then
-							-- Maximum blatant speed with acceleration
-							rageMultiplier = math.min(rageMultiplier + (dt * 2), 2)
-							local rageSpeed = targetSpeed * rageMultiplier
-							destination = (moveDirection * math.max(rageSpeed - velo, 0) * dt)
-							
-							-- No wall check in RAGE mode - phase through
-							root.CFrame += destination
-							root.AssemblyLinearVelocity = (moveDirection * rageSpeed) + Vector3.new(0, root.AssemblyLinearVelocity.Y, 0)
-						end
-						
-						-- AutoJump with custom height
-						if AutoJump.Enabled and (state == Enum.HumanoidStateType.Running or state == Enum.HumanoidStateType.Landed) and moveDirection ~= Vector3.zero and (Attacking or AlwaysJump.Enabled) then
-							entitylib.character.Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
-							
-							-- Apply custom jump height
-							task.wait()
-							if entitylib.isAlive then
-								local currentVel = root.AssemblyLinearVelocity
-								root.AssemblyLinearVelocity = Vector3.new(currentVel.X, JumpHeight.Value, currentVel.Z)
-							end
-						end
-					end
-				end))
-			else
-				pulseTimer = 0
-				rageMultiplier = 1
-			end
-		end,
-		ExtraText = function()
-			return Mode.Value
-		end,
-		Tooltip = 'Increases your movement with various methods.'
-	})
-	
-	Mode = Speed:CreateDropdown({
-		Name = 'Mode',
-		List = {'CFrame', 'Pulse', 'Velocity', 'Legit', 'RAGE'},
-		Default = 'CFrame',
-		Function = function(val)
-			if val == 'RAGE' then
-				rageMultiplier = 1
-			elseif val == 'Pulse' then
-				pulseTimer = 0
-			end
-		end
-	})
-	
-	Value = Speed:CreateSlider({
-		Name = 'Speed',
-		Min = 1,
-		Max = 22,
-		Default = 22,
-		Suffix = function(val)
-			return val == 1 and 'stud' or 'studs'
-		end
-	})
-	
-	WallCheck = Speed:CreateToggle({
-		Name = 'Wall Check',
-		Default = true
-	})
-	
-	AutoJump = Speed:CreateToggle({
-		Name = 'AutoJump',
-		Function = function(callback)
-			AlwaysJump.Object.Visible = callback
-			JumpHeight.Object.Visible = callback
-		end
-	})
-	
-	JumpHeight = Speed:CreateSlider({
-		Name = 'Jump Height',
-		Min = 1,
-		Max = 25,
-		Default = 20,
-		Darker = true,
-		Visible = false
-	})
-	
-	AlwaysJump = Speed:CreateToggle({
-		Name = 'Always Jump',
-		Visible = false,
-		Darker = true
-	})
+    Speed = vape.Categories.Blatant:CreateModule({
+        Name = 'Speed',
+        Function = function(callback)
+            frictionTable.Speed = callback or nil
+            updateVelocity()
+            pcall(function()
+                debug.setconstant(bedwars.WindWalkerController.updateSpeed, 7, callback and 'constantSpeedMultiplier' or 'moveSpeedMultiplier')
+            end)
+
+            if callback then
+                Speed:Clean(runService.PreSimulation:Connect(function(dt)
+                    bedwars.StatefulEntityKnockbackController.lastImpulseTime = callback and math.huge or time()
+                    if entitylib.isAlive and not Fly.Enabled and not InfiniteFly.Enabled and not LongJump.Enabled and isnetworkowner(entitylib.character.RootPart) then
+                        local state = entitylib.character.Humanoid:GetState()
+                        if state == Enum.HumanoidStateType.Climbing then return end
+
+                        local root = entitylib.character.RootPart
+                        local velo = getSpeed()
+                        local moveDirection = AntiFallDirection or entitylib.character.Humanoid.MoveDirection
+                        local destination = (moveDirection * math.max(SpeedValue.Value - velo, 0) * dt)
+
+                        if WallCheck.Enabled then
+                            rayCheck.FilterDescendantsInstances = {lplr.Character, gameCamera}
+                            rayCheck.CollisionGroup = root.CollisionGroup
+                            local ray = workspace:Raycast(root.Position, destination, rayCheck)
+                            if ray then
+                                destination = ((ray.Position + ray.Normal) - root.Position)
+                            end
+                        end
+
+                        root.CFrame += destination
+                        root.AssemblyLinearVelocity = (moveDirection * velo) + Vector3.new(0, root.AssemblyLinearVelocity.Y, 0)
+
+                        if SlowdownAnim.Enabled then
+                            for _, anim in pairs(entitylib.character.Humanoid:GetPlayingAnimationTracks()) do
+                                if anim.Name == "WalkAnim" or anim.Name == "RunAnim" then
+                                    anim:AdjustSpeed(entitylib.character.Humanoid.WalkSpeed / 16)
+                                end
+                            end
+                        end
+
+                        if AutoJump.Enabled and (state == Enum.HumanoidStateType.Running or state == Enum.HumanoidStateType.Landed) 
+                           and moveDirection ~= Vector3.zero and (Attacking or AlwaysJump.Enabled) then
+                            if VanillaJump.Enabled then
+                                entitylib.character.Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+                            else
+                                local v = entitylib.character.HumanoidRootPart.Velocity
+                                entitylib.character.HumanoidRootPart.Velocity = Vector3.new(v.X, JumpHeight.Value, v.Z)
+                                if JumpSound.Enabled then
+                                    pcall(function() entitylib.character.HumanoidRootPart.Jumping:Play() end)
+                                end
+                            end
+                        end
+                    end
+                end))
+            end
+        end,
+        ExtraText = function()
+            return 'Heatseeker'
+        end,
+        Tooltip = 'Increases your movement'
+    })
+
+    SpeedValue = Speed:CreateSlider({
+        Name = 'Speed',
+        Min = 1,
+        Max = 22,
+        Default = 22,
+        Suffix = function(val)
+            return val == 1 and 'stud' or 'studs'
+        end
+    })
+
+    WallCheck = Speed:CreateToggle({
+        Name = 'Wall Check',
+        Default = true
+    })
+
+    JumpHeight = Speed:CreateSlider({
+        Name = 'Jump Height',
+        Min = 0,
+        Max = 30,
+        Default = 25
+    })
+
+    AlwaysJump = Speed:CreateToggle({
+        Name = 'Always Jump',
+        Default = false,
+        Visible = false,
+        Darker = true
+    })
+
+    JumpSound = Speed:CreateToggle({
+        Name = 'Jump Sound',
+        Default = false,
+        Visible = false,
+        Darker = true
+    })
+
+    VanillaJump = Speed:CreateToggle({
+        Name = 'Real Jump',
+        Default = false,
+        Visible = false,
+        Darker = true
+    })
+
+    AutoJump = Speed:CreateToggle({
+        Name = 'AutoJump',
+        Default = true,
+        Function = function(callback)
+            JumpHeight.Object.Visible = callback
+            AlwaysJump.Object.Visible = callback
+            JumpSound.Object.Visible = callback
+            VanillaJump.Object.Visible = callback
+        end
+    })
+
+    SlowdownAnim = Speed:CreateToggle({
+        Name = 'Slowdown Anim',
+        Default = false
+    })
 end)
 
 run(function()
