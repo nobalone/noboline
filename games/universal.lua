@@ -3,6 +3,7 @@
 --This watermark is used to delete the file if its cached, remove it to make the file persist after vape updates.
 --This watermark is used to delete the file if its cached, remove it to make the file persist after vape updates.
 --This watermark is used to delete the file if its cached, remove it to make the file persist after vape updates.
+--This watermark is used to delete the file if its cached, remove it to make the file persist after vape updates.
 local loadstring = function(...)
 	local res, err = loadstring(...)
 	if err and vape then
@@ -257,6 +258,18 @@ vape.Libraries.auraanims = {
 		New = {
 			{CFrame = CFrame.new(0.69, -0.77, 1.47) * CFrame.Angles(math.rad(-33), math.rad(57), math.rad(-81)), Time = 0.12},
 			{CFrame = CFrame.new(0.74, -0.92, 0.88) * CFrame.Angles(math.rad(147), math.rad(71), math.rad(53)), Time = 0.12}
+		},
+		Smooth = {
+	{CFrame = CFrame.new(0.69, -0.7, 0.6) * CFrame.Angles(math.rad(295), math.rad(55), math.rad(290)), Time = 0.15},
+	{CFrame = CFrame.new(0.69, -0.705, 0.6) * CFrame.Angles(math.rad(247), math.rad(57), math.rad(145)), Time = 0.15},
+	{CFrame = CFrame.new(0.69, -0.71, 0.6) * CFrame.Angles(math.rad(200), math.rad(60), math.rad(1)), Time = 0.15}
+		},
+		torpedo = {
+	{CFrame = CFrame.new(0.5, -0.5, 0.65) * CFrame.Angles(math.rad(310), math.rad(45), math.rad(300)), Time = 0.12},
+	{CFrame = CFrame.new(0.6, -0.6, 0.62) * CFrame.Angles(math.rad(270), math.rad(50), math.rad(200)), Time = 0.12},
+	{CFrame = CFrame.new(0.65, -0.68, 0.6) * CFrame.Angles(math.rad(230), math.rad(55), math.rad(100)), Time = 0.12},
+	{CFrame = CFrame.new(0.69, -0.71, 0.6) * CFrame.Angles(math.rad(200), math.rad(60), math.rad(1)), Time = 0.12},
+	{CFrame = CFrame.new(0.4, -0.6, 0.62) * CFrame.Angles(math.rad(250), math.rad(50), math.rad(150)), Time = 0.1}
 		},
 		["Vertical Spin"] = {
 			{CFrame = CFrame.new(0, 0, 0) * CFrame.Angles(math.rad(-90), math.rad(8), math.rad(5)), Time = 0.1},
@@ -5921,165 +5934,6 @@ run(function()
 		end,
 		Decimal = 10
 	})
-end)
-local BetterFly
-run(function()
-    local Speed
-    local Vertical
-    local Accel
-    local Hover
-    local WallCheck
-    local TPDown
-
-    local rayParams = RaycastParams.new()
-    rayParams.RespectCanCollide = true
-
-    local up, down = 0, 0
-    local velocity = Vector3.zero
-
-    local tpActive = false
-    local tpRestoreY
-    local tpUntil = 0
-
-    BetterFly = vape.Categories.Blatant:CreateModule({
-        Name = 'Fly +',
-        Function = function(callback)
-            frictionTable.BetterFly = callback or nil
-            updateVelocity()
-
-            if callback then
-                velocity = Vector3.zero
-                tpActive = false
-
-                BetterFly:Clean(runService.PreSimulation:Connect(function(dt)
-                    if not entitylib.isAlive then return end
-                    if not isnetworkowner(entitylib.character.RootPart) then return end
-
-                    local root = entitylib.character.RootPart
-                    local humanoid = entitylib.character.Humanoid
-                    local moveDir = humanoid.MoveDirection
-
-                    local targetVel =
-                        (moveDir * Speed.Value) +
-                        Vector3.new(0, (up + down) * Vertical.Value, 0)
-
-                    if Hover.Enabled and moveDir.Magnitude == 0 and up == 0 and down == 0 then
-                        targetVel = Vector3.zero
-                    end
-
-                    velocity = velocity:Lerp(targetVel, math.clamp(Accel.Value * dt, 0, 1))
-
-                    rayParams.FilterDescendantsInstances = { lplr.Character, gameCamera, AntiFallPart }
-                    rayParams.CollisionGroup = root.CollisionGroup
-
-                    if WallCheck.Enabled then
-                        local ray = workspace:Raycast(root.Position, velocity * dt, rayParams)
-                        if ray then
-                            velocity = velocity - ray.Normal * velocity:Dot(ray.Normal)
-                        end
-                    end
-
-                    -- TP Down logic
-                    if TPDown.Enabled and not InfiniteFly.Enabled then
-                        local airTime = tick() - entitylib.character.AirTime
-
-                        if airTime > 2.1 and not tpActive then
-                            local ray = workspace:Raycast(
-                                root.Position,
-                                Vector3.new(0, -1000, 0),
-                                rayParams
-                            )
-
-                            if ray then
-                                tpActive = true
-                                tpRestoreY = root.Position.Y
-                                tpUntil = tick() + 0.12
-
-                                root.CFrame = CFrame.new(
-                                    root.Position.X,
-                                    ray.Position.Y + humanoid.HipHeight,
-                                    root.Position.Z
-                                )
-                            end
-                        end
-
-                        if tpActive then
-                            velocity = Vector3.zero
-                            if tick() >= tpUntil then
-                                root.CFrame = CFrame.new(
-                                    root.Position.X,
-                                    tpRestoreY,
-                                    root.Position.Z
-                                )
-                                tpActive = false
-                            end
-                        end
-                    end
-
-                    root.AssemblyLinearVelocity = velocity
-                end))
-
-                BetterFly:Clean(inputService.InputBegan:Connect(function(input)
-                    if inputService:GetFocusedTextBox() then return end
-                    if input.KeyCode == Enum.KeyCode.Space then
-                        up = 1
-                    elseif input.KeyCode == Enum.KeyCode.LeftShift then
-                        down = -1
-                    end
-                end))
-
-                BetterFly:Clean(inputService.InputEnded:Connect(function(input)
-                    if input.KeyCode == Enum.KeyCode.Space then
-                        up = 0
-                    elseif input.KeyCode == Enum.KeyCode.LeftShift then
-                        down = 0
-                    end
-                end))
-            else
-                velocity = Vector3.zero
-                tpActive = false
-            end
-        end,
-        Tooltip = 'Improved Fly with smooth TP Down.'
-    })
-
-    Speed = BetterFly:CreateSlider({
-        Name = 'Speed',
-        Min = 1,
-        Max = 23,
-        Default = 23,
-        Suffix = 'studs'
-    })
-
-    Vertical = BetterFly:CreateSlider({
-        Name = 'Vertical Speed',
-        Min = 1,
-        Max = 100,
-        Default = 60,
-        Suffix = 'studs'
-    })
-
-    Accel = BetterFly:CreateSlider({
-        Name = 'Acceleration',
-        Min = 1,
-        Max = 25,
-        Default = 14
-    })
-
-    Hover = BetterFly:CreateToggle({
-        Name = 'Hover',
-        Default = true
-    })
-
-    WallCheck = BetterFly:CreateToggle({
-        Name = 'Wall Check',
-        Default = true
-    })
-
-    TPDown = BetterFly:CreateToggle({
-        Name = 'TP Down',
-        Default = true
-    })
 end)
 run(function()
     local InfiniteJump
