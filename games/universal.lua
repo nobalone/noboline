@@ -2,6 +2,7 @@
 --This watermark is used to delete the file if its cached, remove it to make the file persist after vape updates.
 --This watermark is used to delete the file if its cached, remove it to make the file persist after vape updates.
 --This watermark is used to delete the file if its cached, remove it to make the file persist after vape updates.
+--This watermark is used to delete the file if its cached, remove it to make the file persist after vape updates.
 local loadstring = function(...)
 	local res, err = loadstring(...)
 	if err and vape then
@@ -7708,21 +7709,21 @@ run(function()
 				    SkyboxRt = 'rbxassetid://218957134',
 				    SkyboxUp = 'rbxassetid://218950090',
 		        },
-		        Velocity = {
-			            SkyboxBk = 'rbxassetid://570557514',
-			            SkyboxDn = 'rbxassetid://570557775',
-			            SkyboxFt = 'rbxassetid://570557559',
-			            SkyboxLf = 'rbxassetid://570557620',
-			            SkyboxRt = 'rbxassetid://570557672',
-			            SkyboxUp = 'rbxassetid://570557727',
+		        Waifu = {
+			            SkyboxBk = 'rbxassetid://12478129491',
+			            SkyboxDn = 'rbxassetid://12478129491',
+			            SkyboxFt = 'rbxassetid://12478129491',
+			            SkyboxLf = 'rbxassetid://12478129491',
+			            SkyboxRt = 'rbxassetid://12478129491',
+			            SkyboxUp = 'rbxassetid://12478129491',
 		        },
-		        Minecraft = {
-			            SkyboxBk = 'rbxassetid://591058823',
-			            SkyboxDn = 'rbxassetid://591059876',
-			            SkyboxFt = 'rbxassetid://591058104',
-			            SkyboxLf = 'rbxassetid://591057861',
-			            SkyboxRt = 'rbxassetid://591057625',
-			            SkyboxUp = 'rbxassetid://591059642',
+		        Loli = {
+			            SkyboxBk = 'rbxassetid://11240679740',
+			            SkyboxDn = 'rbxassetid://11240679740',
+			            SkyboxFt = 'rbxassetid://11240679740',
+			            SkyboxLf = 'rbxassetid://11240679740',
+			            SkyboxRt = 'rbxassetid://11240679740',
+			            SkyboxUp = 'rbxassetid://11240679740',
 		        },
 		        Purple = {
 			            SkyboxBk = "rbxassetid://8539982183",
