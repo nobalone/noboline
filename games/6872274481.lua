@@ -4,6 +4,7 @@
 --This watermark is used to delete the file if its cached, remove it to make the file persist after vape updates.
 --This watermark is used to delete the file if its cached, remove it to make the file persist after vape updates.
 --This watermark is used to delete the file if its cached, remove it to make the file persist after vape updates.
+--This watermark is used to delete the file if its cached, remove it to make the file persist after vape updates.
 local run = function(func)
 	func()
 end
@@ -2646,6 +2647,594 @@ run(function()
 		Name = 'Swing only',
 		Tooltip = 'Only attacks while swinging manually'
 	})]]
+end)
+run(function()
+	local AnticheatBypass
+	local AnticheatBypassTransparent
+	local AnticheatBypassAlternate
+	local AnticheatBypassNotification
+	local AnticheatBypassAutoConfig
+	local AnticheatBypassAutoConfigBig
+	local AnticheatBypassAutoConfigSpeed
+	local AnticheatBypassAutoConfigSpeed2
+	local AnticheatBypassTPSpeed
+	local AnticheatBypassTPLerp
+	
+	local clone
+	local oldcloneroot
+	local anticheatconnection
+	local anticheatconnection2
+	local hip
+	local allowspeed = true
+	local combatcheck = false
+	local disabletpcheck = false
+	local lagbacks = 0
+	local anticheatfunnyyes = false
+	local spawncoro = false
+	local clonesuccess = false
+	local doing = false
+	
+	local AnticheatBypassNumbers = {
+		TPSpeed = 0.13,
+		TPLerp = 0.50,
+		TPCheck = 20,
+		TPCombat = 0.05
+	}
+
+	local function getSpeedMultiplier()
+		return 1
+	end
+
+	local function addvectortocframe2(cframe, y)
+		return CFrame.new(cframe.X, y, cframe.Z) * (cframe - cframe.Position)
+	end
+
+	local function finishcframe(cframe)
+		return shared.VapeOverrideAnticheatBypassCFrame and shared.VapeOverrideAnticheatBypassCFrame(cframe) or cframe
+	end
+
+	local function check()
+		if clone and oldcloneroot and (oldcloneroot.Position - clone.Position).Magnitude >= (AnticheatBypassNumbers.TPCheck * getSpeedMultiplier()) then
+			clone.CFrame = oldcloneroot.CFrame
+		end
+	end
+
+	local function disablestuff()
+		if not AnticheatBypass.Enabled then 
+			doing = false 
+			return 
+		end
+		
+		repeat task.wait() until entitylib.isAlive
+		if not AnticheatBypass.Enabled then 
+			doing = false 
+			return 
+		end
+		
+		oldcloneroot = entitylib.character.HumanoidRootPart
+		lplr.Character.Parent = game
+		clone = oldcloneroot:Clone()
+		clone.Parent = lplr.Character
+		oldcloneroot.Parent = gameCamera
+		
+		-- Use bedwars QueryUtil safely
+		if bedwars.QueryUtil then
+			bedwars.QueryUtil:setQueryIgnored(oldcloneroot, true)
+		end
+		
+		oldcloneroot.Transparency = AnticheatBypassTransparent.Enabled and 1 or 0
+		clone.CFrame = oldcloneroot.CFrame
+		lplr.Character.PrimaryPart = clone
+		lplr.Character.Parent = workspace
+		
+		for i,v in pairs(lplr.Character:GetDescendants()) do 
+			if v:IsA("Weld") or v:IsA("Motor6D") then 
+				if v.Part0 == oldcloneroot then v.Part0 = clone end
+				if v.Part1 == oldcloneroot then v.Part1 = clone end
+			end
+			if v:IsA("BodyVelocity") then 
+				v:Destroy()
+			end
+		end
+		
+		for i,v in pairs(oldcloneroot:GetChildren()) do 
+			if v:IsA("BodyVelocity") then 
+				v:Destroy()
+			end
+		end
+		
+		if hip then 
+			lplr.Character.Humanoid.HipHeight = hip
+		end
+		hip = lplr.Character.Humanoid.HipHeight
+		
+		local bodyvelo = Instance.new("BodyVelocity")
+		bodyvelo.MaxForce = Vector3.new(0, 9e9, 0)
+		bodyvelo.Velocity = Vector3.zero
+		bodyvelo.Parent = oldcloneroot
+		
+		local oldseat 
+		local oldseattab = Instance.new("BindableEvent")
+		
+		-- Heartbeat connection
+		AnticheatBypass:Clean(runService.Heartbeat:Connect(function()
+			if not oldcloneroot or not clone then return end
+			if not oldcloneroot.Parent or not clone.Parent then return end
+			
+			oldcloneroot.AssemblyAngularVelocity = clone.AssemblyAngularVelocity
+			
+			if disabletpcheck then
+				oldcloneroot.Velocity = clone.Velocity
+			else
+				local sit = entitylib.character.Humanoid.Sit
+				if sit ~= oldseat then 
+					if sit then 
+						for i,v in pairs(workspace:GetDescendants()) do 
+							if not v:IsA("Seat") then continue end
+							local weld = v:FindFirstChild("SeatWeld")
+							if weld and weld.Part1 == oldcloneroot then 
+								weld.Part1 = clone
+								pcall(function()
+									if getconnections then
+										for i,v in pairs(getconnections(v:GetPropertyChangedSignal("Occupant"))) do
+											local newfunc = debug.getupvalue(debug.getupvalue(v.Function, 1), 3) 
+											debug.setupvalue(newfunc, 4, {
+												GetPropertyChangedSignal = function(self, prop)
+													return oldseattab.Event
+												end
+											})
+											newfunc()
+										end
+									end
+								end)
+							end
+						end
+					else
+						oldseattab:Fire(false)
+					end
+					oldseat = sit	
+				end
+				
+				local targetvelo = (Vector3.new(clone.Position.X, 0, clone.Position.Z) - Vector3.new(oldcloneroot.Position.X, 0, oldcloneroot.Position.Z))
+				local speed = ((sit or (bedwars.HangGliderController and bedwars.HangGliderController.hangGliderActive)) and targetvelo.Magnitude or 20 * getSpeedMultiplier())
+				targetvelo = (targetvelo.Unit == targetvelo.Unit and targetvelo.Unit or Vector3.zero) * speed
+				bodyvelo.Velocity = Vector3.new(0, clone.Velocity.Y, 0)
+				oldcloneroot.Velocity = Vector3.new(math.clamp(targetvelo.X, -speed, speed), clone.Velocity.Y, math.clamp(targetvelo.Z, -speed, speed))
+			end
+		end))
+		
+		local lagbacktime = 0
+		local lagbackchanged = false
+		local lagbacknotification = false
+		local amountoftimes = 0
+		clonesuccess = true
+		local pinglist = {}
+		local fpslist = {}
+
+		local function getaverageframerate()
+			local frames = 0
+			for i,v in pairs(fpslist) do 
+				frames = frames + v
+			end
+			return #fpslist > 0 and (frames / (60 * #fpslist)) <= 1.2 or #fpslist <= 0 or AnticheatBypassAlternate.Enabled
+		end
+
+		local function didpingspike()
+			local currentpingcheck = pinglist[1] or math.floor(tonumber(game:GetService("Stats"):FindFirstChild("PerformanceStats").Ping:GetValue()))
+			for i,v in pairs(fpslist) do 
+				if v < 40 then 
+					return v.." fps"
+				end
+			end
+			for i,v in pairs(pinglist) do 
+				if v ~= currentpingcheck and math.abs(v - currentpingcheck) >= 100 then 
+					return currentpingcheck.." => "..v.." ping"
+				else
+					currentpingcheck = v
+				end
+			end
+			return nil
+		end
+
+		local function notlasso()
+			for i,v in pairs(collectionService:GetTagged("LassoHooked")) do 
+				if v == lplr.Character then 
+					return false
+				end
+			end
+			return true
+		end
+
+		doing = false
+		allowspeed = true
+		
+		-- Ping/FPS monitoring
+		task.spawn(function()
+			repeat
+				task.wait(1)
+				if not AnticheatBypass.Enabled then break end
+				
+				local ping = math.floor(tonumber(game:GetService("Stats"):FindFirstChild("PerformanceStats").Ping:GetValue()))
+				local fps = math.floor(1 / runService.RenderStepped:Wait())
+				
+				if #pinglist >= 10 then 
+					table.remove(pinglist, 1)
+				end
+				if #fpslist >= 10 then 
+					table.remove(fpslist, 1)
+				end
+				
+				table.insert(pinglist, ping)
+				table.insert(fpslist, fps)
+			until not AnticheatBypass.Enabled
+		end)
+		
+		-- LastTeleported connection
+		if anticheatconnection2 then 
+			anticheatconnection2:Disconnect() 
+		end
+		
+		anticheatconnection2 = lplr:GetAttributeChangedSignal("LastTeleported"):Connect(function()
+			if not AnticheatBypass.Enabled then 
+				if anticheatconnection2 then 
+					anticheatconnection2:Disconnect() 
+				end 
+			end
+			if not (clone and oldcloneroot) then return end
+			clone.CFrame = oldcloneroot.CFrame
+		end)
+		
+		AnticheatBypass:Clean(anticheatconnection2)
+		
+		shared.VapeRealCharacter = {
+			Humanoid = entitylib.character.Humanoid,
+			Head = entitylib.character.Head,
+			HumanoidRootPart = oldcloneroot
+		}
+		
+		if shared.VapeOverrideAnticheatBypassPre then 
+			shared.VapeOverrideAnticheatBypassPre(lplr.Character)
+		end
+		
+		-- Main loop
+		repeat
+			task.wait()
+			if entitylib.isAlive then
+				local oldroot = oldcloneroot
+				if oldroot and oldroot.Parent then
+					local cloneroot = clone
+					if cloneroot and cloneroot.Parent then
+						-- Check if we have network ownership
+						local hasOwnership = isnetworkowner(oldroot)
+						
+						if not hasOwnership then
+							-- Lagback detected
+							if amountoftimes ~= 0 then
+								amountoftimes = 0
+							end
+							
+							if not lagbackchanged then
+								lagbackchanged = true
+								lagbacktime = tick()
+								
+								task.spawn(function()
+									local pingspike = didpingspike() 
+									if pingspike then
+										if AnticheatBypassNotification.Enabled then
+											vape:CreateNotification('AnticheatBypass', 'Lagspike Detected: '..pingspike, 10)
+										end
+									else
+										if store.matchState ~= 2 and notlasso() then
+											lagbacks = lagbacks + 1
+										end
+									end
+									
+									-- Re-toggle module
+									task.spawn(function()
+										if AnticheatBypass.Enabled then
+											AnticheatBypass:Toggle()
+										end
+										local oldclonecharcheck = lplr.Character
+										repeat 
+											task.wait() 
+										until lplr.Character == nil or lplr.Character.Parent == nil or oldclonecharcheck ~= lplr.Character or isnetworkowner(oldroot)
+										
+										if not AnticheatBypass.Enabled then
+											AnticheatBypass:Toggle()
+										end
+									end)
+								end)
+							end
+							
+							if (tick() - lagbacktime) >= 10 and not lagbacknotification then
+								lagbacknotification = true
+								vape:CreateNotification('AnticheatBypass', 'You have been lagbacked for an awfully long time', 10)
+							end
+							
+							cloneroot.Velocity = Vector3.zero
+							oldroot.Velocity = Vector3.zero
+							cloneroot.CFrame = oldroot.CFrame
+						else
+							-- Normal operation
+							lagbackchanged = false
+							lagbacknotification = false
+							
+							if not shared.VapeOverrideAnticheatBypass then
+								if entitylib.character.Humanoid.Sit ~= true then
+									anticheatfunnyyes = true 
+									local frameratecheck = getaverageframerate()
+									local framerate = AnticheatBypassNumbers.TPSpeed <= 0.3 and frameratecheck and -0.22 or 0
+									local framerate2 = AnticheatBypassNumbers.TPSpeed <= 0.3 and frameratecheck and -0.01 or 0
+									framerate = math.floor((AnticheatBypassNumbers.TPLerp + framerate) * 100) / 100
+									framerate2 = math.floor((AnticheatBypassNumbers.TPSpeed + framerate2) * 100) / 100
+									
+									for i = 1, 2 do 
+										check()
+										task.wait(i % 2 == 0 and 0.01 or 0.02)
+										check()
+										
+										if oldroot and cloneroot then
+											anticheatfunnyyes = false
+											if (oldroot.CFrame.p - cloneroot.CFrame.p).Magnitude >= 0.01 then
+												if (Vector3.new(0, oldroot.CFrame.p.Y, 0) - Vector3.new(0, cloneroot.CFrame.p.Y, 0)).Magnitude <= 1 then
+													oldroot.CFrame = finishcframe(oldroot.CFrame:Lerp(addvectortocframe2(cloneroot.CFrame, oldroot.CFrame.p.Y), framerate))
+												else
+													oldroot.CFrame = finishcframe(oldroot.CFrame:Lerp(cloneroot.CFrame, framerate))
+												end
+											end
+										end
+										check()
+									end
+									
+									check()
+									task.wait(combatcheck and framerate2 or framerate2)
+									check()
+									
+									if oldroot and cloneroot then
+										if (oldroot.CFrame.p - cloneroot.CFrame.p).Magnitude >= 0.01 then
+											if (Vector3.new(0, oldroot.CFrame.p.Y, 0) - Vector3.new(0, cloneroot.CFrame.p.Y, 0)).Magnitude <= 1 then
+												oldroot.CFrame = finishcframe(addvectortocframe2(cloneroot.CFrame, oldroot.CFrame.p.Y))
+											else
+												oldroot.CFrame = finishcframe(cloneroot.CFrame)
+											end
+										end
+									end
+									check()
+								else
+									-- Sitting
+									if oldroot and cloneroot then
+										oldroot.CFrame = cloneroot.CFrame
+									end
+								end
+							end
+						end
+					end
+				end
+			end
+		until not AnticheatBypass.Enabled or not oldcloneroot or not oldcloneroot.Parent 
+	end
+
+	local function anticheatbypassenable()
+		task.spawn(function()
+			if spawncoro then return end
+			spawncoro = true
+			allowspeed = false
+			shared.VapeRealCharacter = nil
+			
+			repeat task.wait() until entitylib.isAlive
+			task.wait(0.4)
+			
+			-- Wait for character parts
+			local char = lplr.Character
+			if not char then 
+				spawncoro = false
+				return 
+			end
+			
+			char:WaitForChild("Humanoid", 10)
+			char:WaitForChild("HumanoidRootPart", 20)
+			char:WaitForChild("Head", 20)
+			
+			-- Wait for limbs
+			local limbs = {
+				"LeftHand", "RightHand", "LeftFoot", "RightFoot",
+				"LeftLowerArm", "RightLowerArm", "LeftUpperArm", "RightUpperArm",
+				"LeftLowerLeg", "RightLowerLeg", "LeftUpperLeg", "RightUpperLeg",
+				"UpperTorso", "LowerTorso"
+			}
+			
+			for _, limb in pairs(limbs) do
+				char:WaitForChild(limb, 10)
+			end
+			
+			local root = char:FindFirstChild("HumanoidRootPart")
+			local head = char:FindFirstChild("Head")
+			
+			task.wait(0.4)
+			spawncoro = false
+			
+			if root and head then
+				task.spawn(disablestuff)
+			else
+				vape:CreateNotification('AnticheatBypass', 'Failed to load character parts', 30)
+			end
+		end)
+		
+		anticheatconnection = lplr.CharacterAdded:Connect(function(char)
+			task.spawn(function()
+				if spawncoro then return end
+				spawncoro = true
+				allowspeed = false
+				shared.VapeRealCharacter = nil
+				
+				repeat task.wait() until entitylib.isAlive
+				task.wait(0.4)
+				
+				char:WaitForChild("Humanoid", 10)
+				char:WaitForChild("HumanoidRootPart", 20)
+				char:WaitForChild("Head", 20)
+				
+				local limbs = {
+					"LeftHand", "RightHand", "LeftFoot", "RightFoot",
+					"LeftLowerArm", "RightLowerArm", "LeftUpperArm", "RightUpperArm",
+					"LeftLowerLeg", "RightLowerLeg", "LeftUpperLeg", "RightUpperLeg",
+					"UpperTorso", "LowerTorso"
+				}
+				
+				for _, limb in pairs(limbs) do
+					char:WaitForChild(limb, 10)
+				end
+				
+				local root = char:FindFirstChild("HumanoidRootPart")
+				local head = char:FindFirstChild("Head")
+				
+				task.wait(0.4)
+				spawncoro = false
+				
+				if root and head then
+					task.spawn(disablestuff)
+				else
+					vape:CreateNotification('AnticheatBypass', 'Failed to load character parts', 30)
+				end
+			end)
+		end)
+		
+		AnticheatBypass:Clean(anticheatconnection)
+	end
+
+	AnticheatBypass = vape.Categories.Utility:CreateModule({
+		Name = 'Lagback Bypass',
+		Function = function(callback)
+			if callback then
+				anticheatbypassenable()
+			else
+				allowspeed = true
+				
+				if anticheatconnection then 
+					anticheatconnection:Disconnect()
+				end
+				if anticheatconnection2 then 
+					anticheatconnection2:Disconnect() 
+				end
+				
+				-- Restore character
+				if clonesuccess and oldcloneroot and clone and lplr.Character.Parent == workspace and oldcloneroot.Parent ~= nil then 
+					lplr.Character.Parent = game
+					oldcloneroot.Parent = lplr.Character
+					lplr.Character.PrimaryPart = oldcloneroot
+					lplr.Character.Parent = workspace
+					oldcloneroot.CanCollide = true
+					oldcloneroot.Transparency = 1
+					
+					for i,v in pairs(lplr.Character:GetDescendants()) do 
+						if v:IsA("Weld") or v:IsA("Motor6D") then 
+							if v.Part0 == clone then v.Part0 = oldcloneroot end
+							if v.Part1 == clone then v.Part1 = oldcloneroot end
+						end
+						if v:IsA("BodyVelocity") then 
+							v:Destroy()
+						end
+					end
+					
+					for i,v in pairs(oldcloneroot:GetChildren()) do 
+						if v:IsA("BodyVelocity") then 
+							v:Destroy()
+						end
+					end
+					
+					lplr.Character.Humanoid.HipHeight = hip or 2
+				end
+				
+				if clone then 
+					clone:Destroy()
+					clone = nil
+				end
+				oldcloneroot = nil
+				shared.VapeRealCharacter = nil
+			end
+		end,
+		Tooltip = 'Doesnt slow you down during lagbacks but dont work above void and disables nofall'
+	})
+	
+	AnticheatBypassAutoConfig = AnticheatBypass:CreateToggle({
+		Name = 'Auto Config',
+		Function = function(callback) 
+			if AnticheatBypassAutoConfigSpeed and AnticheatBypassAutoConfigSpeed.Object then 
+				AnticheatBypassAutoConfigSpeed.Object.Visible = callback
+			end
+			if AnticheatBypassAutoConfigSpeed2 and AnticheatBypassAutoConfigSpeed2.Object then 
+				AnticheatBypassAutoConfigSpeed2.Object.Visible = callback
+			end
+			if AnticheatBypassAutoConfigBig and AnticheatBypassAutoConfigBig.Object then 
+				AnticheatBypassAutoConfigBig.Object.Visible = callback
+			end
+		end,
+		Default = true
+	})
+	
+	AnticheatBypassAutoConfigSpeed = AnticheatBypass:CreateSlider({
+		Name = 'Speed',
+		Function = function() end,
+		Min = 1,
+		Max = 100,
+		Default = 54
+	})
+	
+	AnticheatBypassAutoConfigSpeed2 = AnticheatBypass:CreateSlider({
+		Name = 'Big Mode Speed',
+		Function = function() end,
+		Min = 1,
+		Max = 100,
+		Default = 54
+	})
+	
+	AnticheatBypassAutoConfigBig = AnticheatBypass:CreateToggle({
+		Name = 'Big Mode CFrame',
+		Function = function() end,
+		Default = true
+	})
+	
+	AnticheatBypassAlternate = AnticheatBypass:CreateToggle({
+		Name = 'Alternate Numbers',
+		Function = function() end
+	})
+	
+	AnticheatBypassTransparent = AnticheatBypass:CreateToggle({
+		Name = 'Transparent',
+		Function = function(callback) 
+			if oldcloneroot and AnticheatBypass.Enabled then
+				oldcloneroot.Transparency = callback and 1 or 0
+			end
+		end,
+		Default = true
+	})
+	
+	AnticheatBypassNotification = AnticheatBypass:CreateToggle({
+		Name = 'Notifications',
+		Function = function() end,
+		Default = true
+	})
+	AnticheatBypassTPSpeed = AnticheatBypass:CreateSlider({
+		Name = 'TPSpeed',
+		Function = function(val) 
+			AnticheatBypassNumbers.TPSpeed = val / 100
+		end,
+		Min = 1,
+		Max = 100,
+		Decimal = 100,
+		Default = AnticheatBypassNumbers.TPSpeed * 100
+	})
+		
+	AnticheatBypassTPLerp = AnticheatBypass:CreateSlider({
+		Name = 'TPLerp',
+		Function = function(val) 
+			AnticheatBypassNumbers.TPLerp = val / 100
+		end,
+		Min = 1,
+		Max = 100,
+		Decimal = 100,
+		Default = AnticheatBypassNumbers.TPLerp * 100
+	})
 end)
 run(function()
     local Players = game:GetService("Players")
