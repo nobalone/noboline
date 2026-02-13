@@ -2170,7 +2170,6 @@ run(function()
 	local ParticleColor2
 	local ParticleSize
 	local Face
-	local RangeCircle
 	local Animation
 	local AnimationMode
 	local AnimationSpeed
@@ -2417,7 +2416,7 @@ run(function()
 	SwingRange = Killaura:CreateSlider({
 		Name = 'Swing range',
 		Min = 1,
-		Max = 18,
+		Max = 23,
 		Default = 18,
 		Suffix = function(val)
 			return val == 1 and 'stud' or 'studs'
@@ -2426,7 +2425,7 @@ run(function()
 	AttackRange = Killaura:CreateSlider({
 		Name = 'Attack range',
 		Min = 1,
-		Max = 18,
+		Max = 19,
 		Default = 18,
 		Suffix = function(val)
 			return val == 1 and 'stud' or 'studs'
@@ -2631,30 +2630,6 @@ run(function()
 		Name = 'No Tween',
 		Darker = true,
 		Visible = false
-	})
-	RangeCircle = Killaura:CreateToggle({
-		Name = 'Range circle',
-		Function = function(callback)
-			RangeColor.Object.Visible = callback
-			if callback then
-				rangeCircle = Instance.new('MeshPart')
-				rangeCircle.MeshId = 'rbxassetid://3726303797'
-				rangeCircle.CanCollide = false
-				rangeCircle.Anchored = true
-				rangeCircle.Material = Enum.Material.Neon
-				rangeCircle.Size = Vector3.new(AttackRange.Value * 0.7, 0.01, AttackRange.Value * 0.7)
-				rangeCircle.Color = Color3.fromHSV(RangeColor.Hue, RangeColor.Sat, RangeColor.Value)
-				rangeCircle.Parent = Killaura.Enabled and gameCamera or nil
-				bedwars.QueryUtil:setQueryIgnored(rangeCircle, true)
-			else
-				if rangeCircle then
-					rangeCircle:Destroy()
-					rangeCircle = nil
-				end
-			end
-		end,
-		Tooltip = 'Show attack range on ground',
-		Default = true
 	})
 	Limit = Killaura:CreateToggle({
 		Name = 'Limit to items',
