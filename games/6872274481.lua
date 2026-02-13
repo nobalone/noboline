@@ -2170,7 +2170,7 @@ run(function()
 	local ParticleColor2
 	local ParticleSize
 	local Face
-	local FaceMode
+	local RangeCircle
 	local Animation
 	local AnimationMode
 	local AnimationSpeed
@@ -2309,29 +2309,15 @@ run(function()
 								if not Attacking then
 									Attacking = true
 									store.KillauraTarget = v
+									if not Swing.Enabled and AnimDelay < tick() and not LegitAura.Enabled then
+										AnimDelay = tick() + (meta.sword.respectAttackSpeedForEffects and meta.sword.attackSpeed or math.max(ChargeTime.Value, 0.11))
+										bedwars.SwordController:playSwordEffect(meta, false)
+										if meta.displayName:find(' Scythe') then
+											bedwars.ScytheController:playLocalAnimation()
+										end
 
-									-- NEW: Pre-swing vs custom animation
-									local targetDistance = delta.Magnitude
-									if not armC0 then armC0 = gameCamera.Viewmodel.RightHand.RightWrist.C0 end
-
-									if targetDistance > AttackRange.Value then
-										-- Pre-swing pose
-										AnimTween = tweenService:Create(gameCamera.Viewmodel.RightHand.RightWrist, TweenInfo.new(0.1, Enum.EasingStyle.Linear), {
-											C0 = armC0 * CFrame.new(0.69, -0.77, 1.47) * CFrame.Angles(math.rad(-33), math.rad(57), math.rad(-81))
-										})
-										AnimTween:Play()
-									else
-										-- Custom animation handled by your existing AnimationMode loop
-										if not Swing.Enabled and AnimDelay < tick() and not LegitAura.Enabled then
-											AnimDelay = tick() + (meta.sword.respectAttackSpeedForEffects and meta.sword.attackSpeed or math.max(ChargeTime.Value, 0.11))
-											bedwars.SwordController:playSwordEffect(meta, false)
-											if meta.displayName:find(' Scythe') then
-												bedwars.ScytheController:playLocalAnimation()
-											end
-
-											if vape.ThreadFix then
-												setthreadidentity(8)
-											end
+										if vape.ThreadFix then
+											setthreadidentity(8)
 										end
 									end
 								end
@@ -2355,9 +2341,13 @@ run(function()
 									AttackRemote:FireServer({
 										weapon = sword.tool,
 										chargedAttack = {chargeRatio = 0},
+										lastSwingServerTimeDelta = 0.5,
 										entityInstance = v.Character,
 										validate = {
-											raycast = {},
+											raycast = {
+												cameraPosition = {value = pos},
+												cursorDirection = {value = dir}
+											},
 											targetPosition = {value = actualRoot.Position},
 											selfPosition = {value = pos}
 										}
@@ -2381,34 +2371,11 @@ run(function()
 					end
 
 					if Face.Enabled and attacked[1] then
-						local targetPos = attacked[1].Entity.RootPart.Position
-						local selfPos = entitylib.character.RootPart.Position
-						local vec = targetPos * Vector3.new(1, 0, 1)
-						local lookPos = Vector3.new(vec.X, selfPos.Y + 0.001, vec.Z)
-						
-						if FaceMode.Value == 'Instant' then
-							-- Instant snap rotation
-							entitylib.character.RootPart.CFrame = CFrame.lookAt(selfPos, lookPos)
-							
-						elseif FaceMode.Value == 'Smooth' then
-							-- Smooth interpolated rotation
-							local currentCF = entitylib.character.RootPart.CFrame
-							local targetCF = CFrame.lookAt(selfPos, lookPos)
-							entitylib.character.RootPart.CFrame = currentCF:Lerp(targetCF, 0.3)
-							
-						elseif FaceMode.Value == 'Legit' then
-							-- Human-like rotation with slight randomness
-							local currentCF = entitylib.character.RootPart.CFrame
-							local targetCF = CFrame.lookAt(selfPos, lookPos)
-							local lerpAmount = 0.15 + (math.random() * 0.1)
-							entitylib.character.RootPart.CFrame = currentCF:Lerp(targetCF, lerpAmount)
-							
-						elseif FaceMode.Value == 'Silent' then
-							-- Silent aim - no visual rotation
-							-- Attack packets already handle proper validation
-						end
+						local vec = attacked[1].Entity.RootPart.Position * Vector3.new(1, 0, 1)
+						entitylib.character.RootPart.CFrame = CFrame.lookAt(entitylib.character.RootPart.Position, Vector3.new(vec.X, entitylib.character.RootPart.Position.Y + 0.001, vec.Z))
 					end
 
+					--#attacked > 0 and #attacked * 0.02 or
 					task.wait(1 / UpdateRate.Value)
 				until not Killaura.Enabled
 			else
@@ -2437,7 +2404,6 @@ run(function()
 		end,
 		Tooltip = 'Attack players around you\nwithout aiming at them.'
 	})
-	
 	Targets = Killaura:CreateTargets({
 		Players = true,
 		NPCs = true
@@ -2449,19 +2415,19 @@ run(function()
 		end
 	end
 	SwingRange = Killaura:CreateSlider({
-		Name = 'Block range',
-		Min = 18,
-		Max = 35,
-		Default = 25,
+		Name = 'Swing range',
+		Min = 1,
+		Max = 18,
+		Default = 18,
 		Suffix = function(val)
 			return val == 1 and 'stud' or 'studs'
 		end
 	})
 	AttackRange = Killaura:CreateSlider({
 		Name = 'Attack range',
-		Min = 15,
-		Max = 19,
-		Default = 19,
+		Min = 1,
+		Max = 18,
+		Default = 18,
 		Suffix = function(val)
 			return val == 1 and 'stud' or 'studs'
 		end
@@ -2469,8 +2435,8 @@ run(function()
 	ChargeTime = Killaura:CreateSlider({
 		Name = 'Swing time',
 		Min = 0,
-		Max = 0.1,
-		Default = 0.02,
+		Max = 0.5,
+		Default = 0.42,
 		Decimal = 100
 	})
 	AngleSlider = Killaura:CreateSlider({
@@ -2629,18 +2595,7 @@ run(function()
 		Darker = true,
 		Visible = false
 	})
-	Face = Killaura:CreateToggle({
-		Name = 'Face target',
-		Function = function(callback)
-			FaceMode.Object.Visible = callback
-		end
-	})
-	FaceMode = Killaura:CreateDropdown({
-		Name = 'Rotation Mode',
-		List = {'Instant', 'Smooth', 'Legit', 'Silent'},
-		Darker = true,
-		Visible = false
-	})
+	Face = Killaura:CreateToggle({Name = 'Face target'})
 	Animation = Killaura:CreateToggle({
 		Name = 'Custom Animation',
 		Function = function(callback)
@@ -2676,6 +2631,30 @@ run(function()
 		Name = 'No Tween',
 		Darker = true,
 		Visible = false
+	})
+	RangeCircle = Killaura:CreateToggle({
+		Name = 'Range circle',
+		Function = function(callback)
+			RangeColor.Object.Visible = callback
+			if callback then
+				rangeCircle = Instance.new('MeshPart')
+				rangeCircle.MeshId = 'rbxassetid://3726303797'
+				rangeCircle.CanCollide = false
+				rangeCircle.Anchored = true
+				rangeCircle.Material = Enum.Material.Neon
+				rangeCircle.Size = Vector3.new(AttackRange.Value * 0.7, 0.01, AttackRange.Value * 0.7)
+				rangeCircle.Color = Color3.fromHSV(RangeColor.Hue, RangeColor.Sat, RangeColor.Value)
+				rangeCircle.Parent = Killaura.Enabled and gameCamera or nil
+				bedwars.QueryUtil:setQueryIgnored(rangeCircle, true)
+			else
+				if rangeCircle then
+					rangeCircle:Destroy()
+					rangeCircle = nil
+				end
+			end
+		end,
+		Tooltip = 'Show attack range on ground',
+		Default = true
 	})
 	Limit = Killaura:CreateToggle({
 		Name = 'Limit to items',
