@@ -375,9 +375,9 @@ vape.Libraries.auraanims = {
 		{CFrame = CFrame.new(0.7, -0.71, 0.59) * CFrame.Angles(math.rad(-84), math.rad(50), math.rad(-38)), Time = 0.2}
 	},
 	["FAST!!!"] = {
-		{CFrame = CFrame.new(0, 0, 0) * CFrame.Angles(math.rad(220), math.rad(100), math.rad(100)),Time = 0.1},
-        {CFrame = CFrame.new(0, 0, 0) * CFrame.Angles(math.rad(220), math.rad(100), math.rad(100)),Time = 0.1},
-        {CFrame = CFrame.new(0, 0, 0) * CFrame.Angles(math.rad(220), math.rad(100), math.rad(100)),Time = 0.1},
+		{CFrame = CFrame.new(0, 0, 0) * CFrame.Angles(math.rad(200), math.rad(170), math.rad(150)),Time = 0.1},
+        {CFrame = CFrame.new(0, 0, 0) * CFrame.Angles(math.rad(239), math.rad(130), math.rad(120)),Time = 0.1},
+        {CFrame = CFrame.new(0, 0, 0) * CFrame.Angles(math.rad(250), math.rad(90), math.rad(90)),Time = 0.1},
 	},
 	['Exhi3'] = {
 		{CFrame = CFrame.new(0.69, -0.7, 0.6) * CFrame.Angles(math.rad(-30), math.rad(50), math.rad(-90)), Time = 0.15},
