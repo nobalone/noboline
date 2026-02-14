@@ -7914,7 +7914,7 @@ run(function()
 	local FadeOut
 	local trail, point, point2
 	
-	Breadcrumbs = vape.Legit:CreateModule({
+	Breadcrumbs = vape.Categories.Render:CreateModule({
 		Name = 'Breadcrumbs',
 		Function = function(callback)
 			if callback then
@@ -8085,7 +8085,7 @@ run(function()
 	local Color
 	local hat
 	
-	ChinaHat = vape.Legit:CreateModule({
+	ChinaHat = vape.Categories.Render:CreateModule({
 		Name = 'China Hat',
 		Function = function(callback)
 			if callback then
@@ -8347,7 +8347,7 @@ run(function()
 		end
 	end
 	
-	Disguise = vape.Legit:CreateModule({
+	Disguise = vape.Categories.Render:CreateModule({
 		Name = 'Disguise',
 		Function = function(callback)
 			if callback then
@@ -8386,7 +8386,7 @@ run(function()
 	local Value
 	local oldfov
 	
-	FOV = vape.Legit:CreateModule({
+	FOV = vape.Categories.Render:CreateModule({
 		Name = 'FOV',
 		Function = function(callback)
 			if callback then
@@ -8746,7 +8746,7 @@ run(function()
 		end
 	end
 	
-	SongBeats = vape.Legit:CreateModule({
+	SongBeats = vape.Categories.Render:CreateModule({
 		Name = 'Song Beats',
 		Function = function(callback)
 			if callback then
@@ -8876,7 +8876,7 @@ run(function()
 	local Value
 	local old
 	
-	TimeChanger = vape.Legit:CreateModule({
+	TimeChanger = vape.Categories.Render:CreateModule({
 		Name = 'Time Changer',
 		Function = function(callback)
 			if callback then
